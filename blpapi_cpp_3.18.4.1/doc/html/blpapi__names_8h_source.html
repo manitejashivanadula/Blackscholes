@@ -1,0 +1,536 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+<html>
+<title>BLPAPI C++</title>
+<html>
+<pre>
+/* Copyright 2021. Bloomberg Finance L.P.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the &quot;Software&quot;), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:  The above
+ * copyright notice and this permission notice shall be included in all copies
+ * or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
+// blpapi_names.h                                                     -*-C++-*-
+#ifndef INCLUDED_BLPAPI_NAMES
+#define INCLUDED_BLPAPI_NAMES
+
+//@PURPOSE: Provide static &#39;blpapi::Name&#39; instances for common message types.
+//
+//@CLASSES:
+// blpapi::Names: A struct that defines static &#39;blpapi::Name&#39; instances.
+//
+//@DESCRIPTION: This component provides a new utility class called
+// &#39;blpapi::Names&#39; that defines static &#39;blpapi::Name&#39; instances for common
+// message types.  C++17 or later users can use the static &#39;blpapi::Name&#39;
+// constants defined in &#39;blpapi::Names&#39;, e.g., &#39;blpapi::Names::SessionStarted&#39;,
+// other users must use the static functions instead, e.g.,
+// &#39;blpapi::Names::sessionStarted()&#39;.
+
+#ifdef __cplusplus
+
+#include &lt;blpapi_name.h&gt;
+
+namespace BloombergLP {
+namespace blpapi {
+// ============
+// struct Names
+// ============
+
+struct Names {
+    // This struct defines static functions that return static Name instances
+    // for common message types. For C++17 or later, static Name constants are
+    // defined as well.
+
+    static const Name&amp; slowConsumerWarning();
+    static const Name&amp; slowConsumerWarningCleared();
+    static const Name&amp; dataLoss();
+    static const Name&amp; requestTemplateAvailable();
+    static const Name&amp; requestTemplatePending();
+    static const Name&amp; requestTemplateTerminated();
+    static const Name&amp; subscriptionTerminated();
+    static const Name&amp; subscriptionStarted();
+    static const Name&amp; subscriptionFailure();
+    static const Name&amp; subscriptionStreamsActivated();
+    static const Name&amp; subscriptionStreamsDeactivated();
+    static const Name&amp; requestFailure();
+    static const Name&amp; tokenGenerationSuccess();
+    static const Name&amp; tokenGenerationFailure();
+    static const Name&amp; sessionStarted();
+    static const Name&amp; sessionTerminated();
+    static const Name&amp; sessionStartupFailure();
+    static const Name&amp; sessionConnectionUp();
+    static const Name&amp; sessionConnectionDown();
+    static const Name&amp; sessionClusterInfo();
+    static const Name&amp; sessionClusterUpdate();
+    static const Name&amp; serviceOpened();
+    static const Name&amp; serviceOpenFailure();
+    static const Name&amp; serviceRegistered();
+    static const Name&amp; serviceRegisterFailure();
+    static const Name&amp; serviceDeregistered();
+    static const Name&amp; serviceUp();
+    static const Name&amp; serviceDown();
+    static const Name&amp; serviceAvailabilityInfo();
+    static const Name&amp; resolutionSuccess();
+    static const Name&amp; resolutionFailure();
+    static const Name&amp; topicSubscribed();
+    static const Name&amp; topicUnsubscribed();
+    static const Name&amp; topicRecap();
+    static const Name&amp; topicActivated();
+    static const Name&amp; topicDeactivated();
+    static const Name&amp; topicCreated();
+    static const Name&amp; topicCreateFailure();
+    static const Name&amp; topicDeleted();
+    static const Name&amp; topicResubscribed();
+    static const Name&amp; permissionRequest();
+    static const Name&amp; permissionResponse();
+    static const Name&amp; authorizationSuccess();
+    static const Name&amp; authorizationFailure();
+    static const Name&amp; authorizationRevoked();
+
+#if __cplusplus &gt;= 201703L
+    /** @name The following static constants are available for C++17 or later.
+     */
+    /**@{*/
+    static const Name SlowConsumerWarning;
+    static const Name SlowConsumerWarningCleared;
+    static const Name DataLoss;
+    static const Name RequestTemplateAvailable;
+    static const Name RequestTemplatePending;
+    static const Name RequestTemplateTerminated;
+    static const Name SubscriptionTerminated;
+    static const Name SubscriptionStarted;
+    static const Name SubscriptionFailure;
+    static const Name SubscriptionStreamsActivated;
+    static const Name SubscriptionStreamsDeactivated;
+    static const Name RequestFailure;
+    static const Name TokenGenerationSuccess;
+    static const Name TokenGenerationFailure;
+    static const Name SessionStarted;
+    static const Name SessionTerminated;
+    static const Name SessionStartupFailure;
+    static const Name SessionConnectionUp;
+    static const Name SessionConnectionDown;
+    static const Name SessionClusterInfo;
+    static const Name SessionClusterUpdate;
+    static const Name ServiceOpened;
+    static const Name ServiceOpenFailure;
+    static const Name ServiceRegistered;
+    static const Name ServiceRegisterFailure;
+    static const Name ServiceDeregistered;
+    static const Name ServiceUp;
+    static const Name ServiceDown;
+    static const Name ServiceAvailabilityInfo;
+    static const Name ResolutionSuccess;
+    static const Name ResolutionFailure;
+    static const Name TopicSubscribed;
+    static const Name TopicUnsubscribed;
+    static const Name TopicRecap;
+    static const Name TopicActivated;
+    static const Name TopicDeactivated;
+    static const Name TopicCreated;
+    static const Name TopicCreateFailure;
+    static const Name TopicDeleted;
+    static const Name TopicResubscribed;
+    static const Name PermissionRequest;
+    static const Name PermissionResponse;
+    static const Name AuthorizationSuccess;
+    static const Name AuthorizationFailure;
+    static const Name AuthorizationRevoked;
+    /**@}*/
+#endif
+};
+
+inline const Name&amp; Names::slowConsumerWarning()
+{
+    static const Name name { &quot;SlowConsumerWarning&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::slowConsumerWarningCleared()
+{
+    static const Name name { &quot;SlowConsumerWarningCleared&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::dataLoss()
+{
+    static const Name name { &quot;DataLoss&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::requestTemplateAvailable()
+{
+    static const Name name { &quot;RequestTemplateAvailable&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::requestTemplatePending()
+{
+    static const Name name { &quot;RequestTemplatePending&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::requestTemplateTerminated()
+{
+    static const Name name { &quot;RequestTemplateTerminated&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::subscriptionTerminated()
+{
+    static const Name name { &quot;SubscriptionTerminated&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::subscriptionStarted()
+{
+    static const Name name { &quot;SubscriptionStarted&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::subscriptionFailure()
+{
+    static const Name name { &quot;SubscriptionFailure&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::subscriptionStreamsActivated()
+{
+    static const Name name { &quot;SubscriptionStreamsActivated&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::subscriptionStreamsDeactivated()
+{
+    static const Name name { &quot;SubscriptionStreamsDeactivated&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::requestFailure()
+{
+    static const Name name { &quot;RequestFailure&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::tokenGenerationSuccess()
+{
+    static const Name name { &quot;TokenGenerationSuccess&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::tokenGenerationFailure()
+{
+    static const Name name { &quot;TokenGenerationFailure&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::sessionStarted()
+{
+    static const Name name { &quot;SessionStarted&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::sessionTerminated()
+{
+    static const Name name { &quot;SessionTerminated&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::sessionStartupFailure()
+{
+    static const Name name { &quot;SessionStartupFailure&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::sessionConnectionUp()
+{
+    static const Name name { &quot;SessionConnectionUp&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::sessionConnectionDown()
+{
+    static const Name name { &quot;SessionConnectionDown&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::sessionClusterInfo()
+{
+    static const Name name { &quot;SessionClusterInfo&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::sessionClusterUpdate()
+{
+    static const Name name { &quot;SessionClusterUpdate&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::serviceOpened()
+{
+    static const Name name { &quot;ServiceOpened&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::serviceOpenFailure()
+{
+    static const Name name { &quot;ServiceOpenFailure&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::serviceRegistered()
+{
+    static const Name name { &quot;ServiceRegistered&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::serviceRegisterFailure()
+{
+    static const Name name { &quot;ServiceRegisterFailure&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::serviceDeregistered()
+{
+    static const Name name { &quot;ServiceDeregistered&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::serviceUp()
+{
+    static const Name name { &quot;ServiceUp&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::serviceDown()
+{
+    static const Name name { &quot;ServiceDown&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::serviceAvailabilityInfo()
+{
+    static const Name name { &quot;ServiceAvailabilityInfo&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::resolutionSuccess()
+{
+    static const Name name { &quot;ResolutionSuccess&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::resolutionFailure()
+{
+    static const Name name { &quot;ResolutionFailure&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::topicSubscribed()
+{
+    static const Name name { &quot;TopicSubscribed&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::topicUnsubscribed()
+{
+    static const Name name { &quot;TopicUnsubscribed&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::topicRecap()
+{
+    static const Name name { &quot;TopicRecap&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::topicActivated()
+{
+    static const Name name { &quot;TopicActivated&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::topicDeactivated()
+{
+    static const Name name { &quot;TopicDeactivated&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::topicCreated()
+{
+    static const Name name { &quot;TopicCreated&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::topicCreateFailure()
+{
+    static const Name name { &quot;TopicCreateFailure&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::topicDeleted()
+{
+    static const Name name { &quot;TopicDeleted&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::topicResubscribed()
+{
+    static const Name name { &quot;TopicResubscribed&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::permissionRequest()
+{
+    static const Name name { &quot;PermissionRequest&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::permissionResponse()
+{
+    static const Name name { &quot;PermissionResponse&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::authorizationSuccess()
+{
+    static const Name name { &quot;AuthorizationSuccess&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::authorizationFailure()
+{
+    static const Name name { &quot;AuthorizationFailure&quot; };
+    return name;
+}
+
+inline const Name&amp; Names::authorizationRevoked()
+{
+    static const Name name { &quot;AuthorizationRevoked&quot; };
+    return name;
+}
+
+#if __cplusplus &gt;= 201703L
+inline const Name Names::SlowConsumerWarning { slowConsumerWarning() };
+
+inline const Name Names::SlowConsumerWarningCleared {
+    slowConsumerWarningCleared()
+};
+
+inline const Name Names::DataLoss { dataLoss() };
+
+inline const Name Names::RequestTemplateAvailable {
+    requestTemplateAvailable()
+};
+
+inline const Name Names::RequestTemplatePending { requestTemplatePending() };
+
+inline const Name Names::RequestTemplateTerminated {
+    requestTemplateTerminated()
+};
+
+inline const Name Names::SubscriptionTerminated { subscriptionTerminated() };
+
+inline const Name Names::SubscriptionStarted { subscriptionStarted() };
+
+inline const Name Names::SubscriptionFailure { subscriptionFailure() };
+
+inline const Name Names::SubscriptionStreamsActivated {
+    subscriptionStreamsActivated()
+};
+
+inline const Name Names::SubscriptionStreamsDeactivated {
+    subscriptionStreamsDeactivated()
+};
+
+inline const Name Names::RequestFailure { requestFailure() };
+
+inline const Name Names::TokenGenerationSuccess { tokenGenerationSuccess() };
+
+inline const Name Names::TokenGenerationFailure { tokenGenerationFailure() };
+
+inline const Name Names::SessionStarted { sessionStarted() };
+
+inline const Name Names::SessionTerminated { sessionTerminated() };
+
+inline const Name Names::SessionStartupFailure { sessionStartupFailure() };
+
+inline const Name Names::SessionConnectionUp { sessionConnectionUp() };
+
+inline const Name Names::SessionConnectionDown { sessionConnectionDown() };
+
+inline const Name Names::SessionClusterInfo { sessionClusterInfo() };
+
+inline const Name Names::SessionClusterUpdate { sessionClusterUpdate() };
+
+inline const Name Names::ServiceOpened { serviceOpened() };
+
+inline const Name Names::ServiceOpenFailure { serviceOpenFailure() };
+
+inline const Name Names::ServiceRegistered { serviceRegistered() };
+
+inline const Name Names::ServiceRegisterFailure { serviceRegisterFailure() };
+
+inline const Name Names::ServiceDeregistered { serviceDeregistered() };
+
+inline const Name Names::ServiceUp { serviceUp() };
+
+inline const Name Names::ServiceDown { serviceDown() };
+
+inline const Name Names::ServiceAvailabilityInfo { serviceAvailabilityInfo() };
+
+inline const Name Names::ResolutionSuccess { resolutionSuccess() };
+
+inline const Name Names::ResolutionFailure { resolutionFailure() };
+
+inline const Name Names::TopicSubscribed { topicSubscribed() };
+
+inline const Name Names::TopicUnsubscribed { topicUnsubscribed() };
+
+inline const Name Names::TopicRecap { topicRecap() };
+
+inline const Name Names::TopicActivated { topicActivated() };
+
+inline const Name Names::TopicDeactivated { topicDeactivated() };
+
+inline const Name Names::TopicCreated { topicCreated() };
+
+inline const Name Names::TopicCreateFailure { topicCreateFailure() };
+
+inline const Name Names::TopicDeleted { topicDeleted() };
+
+inline const Name Names::TopicResubscribed { topicResubscribed() };
+
+inline const Name Names::PermissionRequest { permissionRequest() };
+
+inline const Name Names::PermissionResponse { permissionResponse() };
+
+inline const Name Names::AuthorizationSuccess { authorizationSuccess() };
+
+inline const Name Names::AuthorizationFailure { authorizationFailure() };
+
+inline const Name Names::AuthorizationRevoked { authorizationRevoked() };
+
+#endif
+
+} // close namespace blpapi
+} // close namespace BloombergLP
+
+#endif // ifdef __cplusplus
+
+#endif // #ifndef INCLUDED_BLPAPI_NAMES
+</pre>
+</body>
+</html>

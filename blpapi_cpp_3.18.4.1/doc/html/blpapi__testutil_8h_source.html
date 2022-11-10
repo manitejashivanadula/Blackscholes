@@ -1,0 +1,492 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+<html>
+<title>BLPAPI C++</title>
+<html>
+<pre>
+/* Copyright 2019. Bloomberg Finance L.P.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the &quot;Software&quot;), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:  The above
+ * copyright notice and this permission notice shall be included in all copies
+ * or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
+// blpapi_testutil.h                                                  -*-C++-*-
+#ifndef INCLUDED_BLPAPI_TESTUTIL
+#define INCLUDED_BLPAPI_TESTUTIL
+
+//@PURPOSE: Provides static utility for unit testing BLPAPI applications.
+//@CLASSES:
+// blpapi::test::TestUtil: Static utility class for unit testing
+//
+//@SEE_ALSO: blpapi_messageformatter
+//
+//@DESCRIPTION: This component defines a class, TestUtil, that provides helpers
+// for unit-testing BLPAPI. This includes serializing / deserializing services,
+// creating test events, and appending / formatting messages in these events.
+//
+/// Usage
+///-----
+//
+/// Example: Create subscription data with correlation id:
+///  - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// For the purpose of unit testing the behavior of our tick processing, we
+// want to create a subscription data event containing a single tick for a
+// given subscription, identified with a correlation id &#39;correlationId&#39; that
+// is available in the test.
+//
+// We first create the service from a string:
+//
+//..
+// using BloombergLP::blpapi::Event;
+// using BloombergLP::blpapi::Name;
+//..
+// using BloombergLP::blpapi::test::MessageFormatter;
+// using BloombergLP::blpapi::test::MessageProperties;
+// using BloombergLP::blpapi::test::TestUtil;
+//..
+// const char *schema = &quot;&lt;ServiceDefinition name=...&gt;...&lt;/ServiceDefinition&gt;&quot;;
+//
+// std::istringstream stream(schema);
+// Service service = TestUtil::deserializeService(stream);
+//..
+//
+// We then create a subscription event
+//
+//..
+// Event event = TestUtil::createSubscriptionEvent(service);
+//..
+//
+// We prepare the message properties:
+//
+//..
+// MessageProperties properties;
+// properties.setCorrelationId(correlationId);
+//..
+//
+// Then, we obtain the definition for the message from the schema:
+//
+//..
+// const Name msgName(&quot;MarketDataEvents&quot;);
+// const SchemaElementDefinition def = service.getEventDefinition(msgName);
+//..
+//
+// Now we append a message and obtain a formatter:
+//
+//..
+// MessageFormatter fmt = TestUtil::appendMessage(event, def, properties);
+//..
+//
+// The formatter can now be used to fill in the data we want to be using in
+// the test.
+// Note that service creation and the definitions for the ticks can be shared
+// by all of the unit tests that need to create the same type of events.
+
+#include &lt;blpapi_correlationid.h&gt;
+#include &lt;blpapi_datetime.h&gt;
+#include &lt;blpapi_defs.h&gt;
+#include &lt;blpapi_event.h&gt;
+#include &lt;blpapi_messageformatter.h&gt;
+#include &lt;blpapi_service.h&gt;
+#include &lt;blpapi_streamproxy.h&gt;
+#include &lt;blpapi_topic.h&gt;
+#include &lt;blpapi_types.h&gt;
+
+#ifdef __cplusplus
+extern &quot;C&quot; {
+#endif
+
+BLPAPI_EXPORT
+int blpapi_TestUtil_createEvent(blpapi_Event_t **event, int eventType);
+
+BLPAPI_EXPORT
+int blpapi_TestUtil_deserializeService(
+        const char *schema, size_t schemaLength, blpapi_Service_t **service);
+
+BLPAPI_EXPORT
+int blpapi_TestUtil_serializeService(blpapi_StreamWriter_t streamWriter,
+        void *stream,
+        const blpapi_Service_t *service);
+
+BLPAPI_EXPORT
+int blpapi_TestUtil_appendMessage(blpapi_MessageFormatter_t **formatter,
+        blpapi_Event_t *event,
+        const blpapi_SchemaElementDefinition_t *messageType,
+        const blpapi_MessageProperties_t *properties);
+
+BLPAPI_EXPORT
+int blpapi_TestUtil_createTopic(
+        blpapi_Topic_t **topic, const blpapi_Service_t *service, int isActive);
+
+BLPAPI_EXPORT
+int blpapi_TestUtil_getAdminMessageDefinition(
+        blpapi_SchemaElementDefinition_t **definition,
+        blpapi_Name_t *messageName);
+
+BLPAPI_EXPORT
+int blpapi_MessageProperties_create(
+        blpapi_MessageProperties_t **messageProperties);
+
+BLPAPI_EXPORT
+void blpapi_MessageProperties_destroy(
+        blpapi_MessageProperties_t *messageProperties);
+
+BLPAPI_EXPORT
+int blpapi_MessageProperties_copy(blpapi_MessageProperties_t **dest,
+        const blpapi_MessageProperties_t *src);
+
+BLPAPI_EXPORT
+int blpapi_MessageProperties_assign(blpapi_MessageProperties_t *lhs,
+        const blpapi_MessageProperties_t *rhs);
+
+BLPAPI_EXPORT
+int blpapi_MessageProperties_setCorrelationIds(
+        blpapi_MessageProperties_t *messageProperties,
+        const blpapi_CorrelationId_t *correlationIds,
+        size_t numCorrelationIds);
+
+BLPAPI_EXPORT
+int blpapi_MessageProperties_setRecapType(
+        blpapi_MessageProperties_t *messageProperties,
+        int recap,
+        int fragment);
+
+BLPAPI_EXPORT
+int blpapi_MessageProperties_setTimeReceived(
+        blpapi_MessageProperties_t *messageProperties,
+        const blpapi_HighPrecisionDatetime_t *timestamp);
+
+BLPAPI_EXPORT
+int blpapi_MessageProperties_setService(
+        blpapi_MessageProperties_t *messageProperties,
+        const blpapi_Service_t *service);
+
+BLPAPI_EXPORT
+int blpapi_MessageProperties_setRequestId(
+        blpapi_MessageProperties_t *messageProperties, const char *requestId);
+
+#ifdef __cplusplus
+} // extern &quot;C&quot;
+
+#include &lt;cstdio&gt;
+#include &lt;fstream&gt;
+#include &lt;vector&gt;
+
+namespace BloombergLP {
+namespace blpapi {
+namespace test {
+
+// =======================
+// class MessageProperties
+// =======================
+
+class MessageProperties {
+    // This class represents properties of a message that are not part of
+    // the message contents, for example the correlation ids, or timestamp.
+
+  private:
+    blpapi_MessageProperties_t *d_handle_p;
+
+  public:
+    // CREATORS
+    MessageProperties();
+    // Creates a &#39;MessageProperties&#39; with default values. Default
+    // value for &#39;CorrelationId&#39; property is an empty vector. Default
+    // value for &#39;RecapType&#39; property is &#39;Message::RecapType::e_none&#39;.
+    // Default value for &#39;FragmentType&#39; property is
+    // &#39;Message::FRAGMENT_NONE&#39;. Value for &#39;Service&#39; and timestamp is
+    // &quot;unset&quot;.
+
+    MessageProperties(const MessageProperties&amp; original);
+    // Creates a &#39;MessageProperties&#39; from &#39;original&#39;.
+
+    ~MessageProperties();
+    // Destroys this &#39;MessageProperties&#39;.
+
+    // MANIPULATORS
+    MessageProperties&amp; operator=(const MessageProperties&amp; rhs);
+    // Make this &#39;MessageProperties&#39; same as &#39;rhs&#39;.
+
+    MessageProperties&amp; setCorrelationIds(
+            const blpapi_CorrelationId_t *correlationIds,
+            size_t correlationIdCount);
+    // Sets the &#39;CorrelationId&#39; property. &#39;correlationIdCount&#39; provides
+    // the number of &#39;correlationIds&#39; to be added. The behavior is
+    // undefined unless &#39;correlationIds&#39; points to an array of at least
+    // &#39;correlationIdCount&#39; elements. The default value of
+    // &#39;CorrelationId&#39; property is an empty vector.
+
+    MessageProperties&amp; setCorrelationIds(
+            const std::vector&lt;CorrelationId&gt;&amp; correlationIds);
+    // Sets the &#39;CorrelationId&#39; property. &#39;correlationIds&#39; provides
+    // the &#39;CorrelationId&#39; to be added.
+
+    MessageProperties&amp; setCorrelationId(const CorrelationId&amp; correlationId);
+    // Equivalent to &#39;setCorrelationIds(&amp;correlationId, 1)&#39;.
+
+    MessageProperties&amp; setRecapType(Message::RecapType::Type recapType,
+            Message::Fragment fragmentType = Message::FRAGMENT_NONE);
+    // Sets the &#39;RecapType&#39; and &#39;FragmentType&#39; properties.
+
+    MessageProperties&amp; setTimeReceived(const Datetime&amp; timeReceived);
+    // Sets the time received property. The default timestamp is
+    // &quot;unset&quot;, so attempting to retrieve the timestamp of a message
+    // with default properties will throw an exception.
+
+    MessageProperties&amp; setService(const Service&amp; service);
+    // Sets the service property.
+
+    MessageProperties&amp; setRequestId(const char *requestId);
+    // Sets the request id property. A copy of this string
+    // is expected to be returned by &#39;Message::getRequestId()&#39;.
+    // If &#39;requestId&#39; is empty or null, the method throws.
+
+    // ACCESSORS
+    blpapi_MessageProperties_t *handle() const;
+    // Return the handle of the current &#39;MessageProperties&#39;. For
+    // *internal* use only.
+};
+
+// ==============
+// class TestUtil
+// ==============
+
+class TestUtil {
+    // This class provides a set of utility functions to allow SDK clients
+    // to create events/messages for unit-testing their applications.
+
+  public:
+    // TYPES
+
+    // *Deprecated*
+    // Following typedef is provided for backwards compatibility. It will be
+    // removed in a future release.
+    typedef test::MessageProperties MessageProperties;
+
+    // CLASS METHODS
+    static Event createEvent(Event::EventType eventType);
+    // Creates and returns an &#39;Event&#39; to be used for testing with the
+    // specified &#39;eventType&#39;. The returned &#39;Event&#39; cannot be used for
+    // publishing. The behavior is undefined if &#39;EventFormatter&#39; is
+    // used with the returned &#39;Event&#39;.
+
+    static MessageFormatter appendMessage(Event&amp; event,
+            const SchemaElementDefinition&amp; elementDef,
+            const MessageProperties&amp; properties = MessageProperties());
+    // Creates a new message and appends it to the specified &#39;event&#39;.
+    // Returns a &#39;MessageFormatter&#39; to format the last appended message.
+    // The specified &#39;event&#39; must be a test &#39;Event&#39; created from
+    // &#39;TestUtil::createEvent()&#39;. &#39;elementDef&#39; is used to verify and encode
+    // the contents of the message and the specified &#39;properties&#39; are used
+    // to set the metadata properties for the message. An exception is
+    // thrown if the method fails to append the message.
+
+    static Service deserializeService(std::istream&amp; stream);
+    // Creates a &#39;Service&#39; object from the specified &#39;stream&#39;. The
+    // format of the stream must be &#39;XML&#39;. The stream should only contain
+    // ASCII characters without any embedded &#39;null&#39; characters. Returns
+    // the &#39;Service&#39; object on success or throws &#39;blpapi::Exception&#39; on
+    // failure.
+
+    static void serializeService(std::ostream&amp; stream, const Service&amp; service);
+    // Serialize the specific &#39;service&#39; into the specified &#39;stream&#39; in
+    // &#39;XML&#39; format. An exception is thrown if the service can&#39;t be
+    // serialized successfully.
+
+    static Topic createTopic(const Service&amp; service, bool isActive = true);
+    // Create a valid &#39;Topic&#39; with the specified &#39;service&#39; to support
+    // testing publishers. The expected use case is to support returning a
+    // custom &#39;Topic&#39; while mocking `session.getTopic()` methods.
+
+    static SchemaElementDefinition getAdminMessageDefinition(
+            const Name&amp; messageName);
+    // Return the definition for an admin message of the specified
+    // &#39;messageName&#39;.
+};
+
+// ============================================================================
+//                      INLINE FUNCTION DEFINITIONS
+// ============================================================================
+
+// --------------
+// class TestUtil
+// --------------
+
+inline Event TestUtil::createEvent(Event::EventType eventType)
+{
+    blpapi_Event_t *event = 0;
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_TestUtil_createEvent)(&amp;event, eventType));
+    return event;
+}
+
+inline Service TestUtil::deserializeService(std::istream&amp; stream)
+{
+    blpapi_Service_t *buffer = 0;
+
+    // This is a workaround for SunOS compiler not supporting construction from
+    // &#39;std::istreambuf_iterator&#39;.
+    std::string schema;
+    std::getline(stream, schema, &#39;\0&#39;);
+
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_TestUtil_deserializeService)(
+                    schema.c_str(), schema.length(), &amp;buffer));
+    return Service(buffer, Service::TestService());
+}
+
+inline void TestUtil::serializeService(
+        std::ostream&amp; stream, const Service&amp; service)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(blpapi_TestUtil_serializeService)(
+            StreamProxyOstream::writeToStream, &amp;stream, service.handle()));
+}
+
+inline MessageFormatter TestUtil::appendMessage(Event&amp; event,
+        const SchemaElementDefinition&amp; elementDef,
+        const MessageProperties&amp; properties)
+{
+    blpapi_MessageFormatter_t *formatter = 0;
+    ExceptionUtil::throwOnError(BLPAPI_CALL(blpapi_TestUtil_appendMessage)(
+            &amp;formatter, event.impl(), elementDef.impl(), properties.handle()));
+
+    return MessageFormatter(formatter);
+}
+
+inline Topic TestUtil::createTopic(const Service&amp; service, bool isActive)
+{
+    blpapi_Topic_t *topic = 0;
+    ExceptionUtil::throwOnError(BLPAPI_CALL(blpapi_TestUtil_createTopic)(
+            &amp;topic, service.handle(), isActive));
+    return Topic(topic);
+}
+
+inline SchemaElementDefinition TestUtil::getAdminMessageDefinition(
+        const Name&amp; messageName)
+{
+    blpapi_SchemaElementDefinition_t *definition = 0;
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_TestUtil_getAdminMessageDefinition)(
+                    &amp;definition, messageName.impl()));
+    return SchemaElementDefinition(definition);
+}
+
+inline MessageProperties::MessageProperties()
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageProperties_create)(&amp;d_handle_p));
+}
+
+inline MessageProperties::MessageProperties(const MessageProperties&amp; original)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(blpapi_MessageProperties_copy)(
+            &amp;d_handle_p, original.handle()));
+}
+
+inline MessageProperties&amp; MessageProperties::operator=(
+        const MessageProperties&amp; rhs)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(blpapi_MessageProperties_assign)(
+            d_handle_p, rhs.handle()));
+    return *this;
+}
+
+inline MessageProperties::~MessageProperties()
+{
+    BLPAPI_CALL_UNCHECKED(blpapi_MessageProperties_destroy)(d_handle_p);
+}
+
+inline blpapi_MessageProperties_t *MessageProperties::handle() const
+{
+    return d_handle_p;
+}
+
+inline MessageProperties&amp; MessageProperties::setCorrelationId(
+        const CorrelationId&amp; cid)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageProperties_setCorrelationIds)(
+                    d_handle_p, &amp;cid.impl(), 1));
+    return *this;
+}
+
+inline MessageProperties&amp; MessageProperties::setCorrelationIds(
+        const std::vector&lt;CorrelationId&gt;&amp; cids)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageProperties_setCorrelationIds)(
+                    d_handle_p, &amp;cids[0].impl(), cids.size()));
+    return *this;
+}
+
+inline MessageProperties&amp; MessageProperties::setCorrelationIds(
+        const blpapi_CorrelationId_t *correlationIds,
+        size_t correlationIdCount)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageProperties_setCorrelationIds)(
+                    d_handle_p, correlationIds, correlationIdCount));
+    return *this;
+}
+
+inline MessageProperties&amp; MessageProperties::setRecapType(
+        Message::RecapType::Type recapType, Message::Fragment fragmentType)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageProperties_setRecapType)(d_handle_p,
+                    static_cast&lt;int&gt;(recapType),
+                    static_cast&lt;int&gt;(fragmentType)));
+    return *this;
+}
+
+inline MessageProperties&amp; MessageProperties::setTimeReceived(
+        const Datetime&amp; timeReceived)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageProperties_setTimeReceived)(
+                    d_handle_p, &amp;timeReceived.rawHighPrecisionValue()));
+    return *this;
+}
+
+inline MessageProperties&amp; MessageProperties::setService(const Service&amp; service)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageProperties_setService)(
+                    d_handle_p, service.handle()));
+    return *this;
+}
+
+inline MessageProperties&amp; MessageProperties::setRequestId(
+        const char *requestId)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(
+            blpapi_MessageProperties_setRequestId)(d_handle_p, requestId));
+    return *this;
+}
+
+} // close namespace test
+
+// *Deprecated*
+// Following typedef is provided for backwards compatibility.  It will be
+// removed in a future release.
+typedef test::TestUtil TestUtil;
+
+} // close namespace blpapi
+} // close namespace BloombergLP
+
+#endif // #ifdef __cplusplus
+#endif // #ifndef INCLUDED_BLPAPI_TESTUTIL
+</pre>
+</body>
+</html>

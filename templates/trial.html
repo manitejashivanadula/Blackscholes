@@ -1,0 +1,220 @@
+
+import json
+import numpy as np
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+from scipy.stats import norm
+
+app= Flask(__name__)
+
+@app.route('/Blackscholes_model')
+def index():
+    title="Options Pricer"
+    return render_template("main.html", title=title)
+
+N = norm.cdf
+
+@app.route('/Blackscholes_model_form', methods=['GET','POST'])
+#main fu
+def BS_data():
+#option_price_calculation  
+    S= float(request.json['S'])
+    K= float(request.json['K'])
+    T= int(request.json['T'])
+    D= float(request.json['D'])
+    r= float(request.json['r'])
+    sigma=  float(request.json['sigma'])
+    optiondata= int(request.json['option']) 
+      
+    if (optiondata ==1):
+        
+#EU_call_option_function
+        Eu_call_option= BS_CALLDIV(S, K, T, r, D, sigma)
+#EU_call_option_delta       
+        Eu_call_option_delta=BS_CALL_DELTA(r, S, K, T, sigma)
+#EU_option_gamma..........Gamma will be same for call and put option 
+        Eu_option_gamma=BS_GAMMA(r, S, K, T, sigma)   
+#EU_option_vega......vega will be same for call and put option        
+        Eu_option_vega=BS_VEGA(r, S, K, T, sigma)
+#EU_call_option_theta     
+        Eu_call_option_theta=BS_CALL_THETA(r, S, K, T, sigma)
+
+        x={'result1':Eu_call_option,'result2':Eu_call_option_delta,'result3':Eu_option_gamma,
+           'result4':Eu_option_vega,'result5':Eu_call_option_theta}
+        return jsonify(x)  
+    
+    else:
+        
+#EU_put_option_function
+        Eu_put_option= BS_PUTDIV(S, K, T, r, D, sigma)
+#EU_call_option_delta       
+        Eu_put_option_delta=BS_PUT_DELTA(r, S, K, T, sigma)       
+#EU_option_gamma..........Gamma will be same for call and put option 
+        Eu_option_gamma=BS_GAMMA(r, S, K, T, sigma) 
+#EU_option_vega..........vega will be same for call and put option        
+        Eu_option_vega=BS_VEGA(r, S, K, T, sigma)
+#EU_put_option_theta     
+        Eu_put_option_theta=BS_PUT_THETA(r, S, K, T, sigma)
+        
+        Output={'result1':Eu_put_option,'result2':Eu_put_option_delta,'result3':Eu_option_gamma,
+           'result4':Eu_option_vega,'result5':Eu_put_option_theta}
+        return jsonify(Output)  
+
+#EU_call_option_calculation 
+def BS_CALLDIV(S, K, T, r, D, sigma):
+    d1 = (np.log(S/K) + (r - D + sigma**2/2)*T) / (sigma*np.sqrt(T))
+    d2 = d1 - sigma* np.sqrt(T)
+    return "{0:.2f}".format(S*np.exp(-D*T) * N(d1) - K * np.exp(-r*T)* N(d2))
+
+#EU_call_option_delta_calculation 
+def BS_CALL_DELTA(r, S, K, T, sigma):
+    d1 = (np.log(S/K) + (r + sigma**2/2)*T)/(sigma*np.sqrt(T))
+    call_delta = "{0:.2f}".format(norm.cdf(d1, 0, 1))
+    return call_delta
+
+#EU_gamma_calculation 
+def BS_GAMMA(r, S, K, T, sigma):
+    d1 = (np.log(S/K) + (r + sigma**2/2)*T)/(sigma*np.sqrt(T))
+    d2 = d1 - sigma*np.sqrt(T)
+    gamma_calc = "{0:.2f}".format(norm.pdf(d1, 0, 1)/(S*sigma*np.sqrt(T)))
+    return gamma_calc 
+
+#EU_vega_calculation 
+def BS_VEGA(r, S, K, T, sigma):
+    d1 = (np.log(S/K) + (r + sigma**2/2)*T)/(sigma*np.sqrt(T))
+    d2 = d1 - sigma*np.sqrt(T)
+    vega_calc = "{0:.2f}".format(S*norm.pdf(d1, 0, 1)*np.sqrt(T))
+    return vega_calc
+
+#EU_call_option_theta_calculation 
+def BS_CALL_THETA(r, S, K, T, sigma):
+    d1 = (np.log(S/K) + (r + sigma**2/2)*T)/(sigma*np.sqrt(T))
+    d2 = d1 - sigma*np.sqrt(T)
+    theta_calc = -(-S*norm.pdf(d1, 0, 1)*sigma/(2*np.sqrt(T)) - r*K*np.exp(-r*T)*norm.cdf(d2, 0, 1))
+    return "{0:.2f}".format(theta_calc)
+
+#EU_put_option_calculation 
+def BS_PUTDIV(S, K, T, r, D, sigma):
+    d1 = (np.log(S/K) + (r -D + sigma**2/2)*T) / (sigma*np.sqrt(T))
+    d2 = d1 - sigma* np.sqrt(T)
+    return "{0:.2f}".format(K*np.exp(-r*T)*N(-d2) - S*N(-d1))
+
+#EU_put_option_delta_calculation 
+def BS_PUT_DELTA(r, S, K, T, sigma):
+    d1 = (np.log(S/K) + (r + sigma**2/2)*T)/(sigma*np.sqrt(T))
+    put_delta = -norm.cdf(-d1, 0, 1)
+    return "{0:.2f}".format(put_delta)
+
+#EU_put_option_theta_calculation 
+def BS_PUT_THETA(r, S, K, T, sigma):
+    d1 = (np.log(S/K) + (r + sigma**2/2)*T)/(sigma*np.sqrt(T))
+    d2 = d1 - sigma*np.sqrt(T)
+    theta_put = -(-S*norm.pdf(d1, 0, 1)*sigma/(2*np.sqrt(T)) + r*K*np.exp(-r*T)*norm.cdf(-d2, 0, 1))
+    return "{0:.2f}".format(theta_put)
+
+app.run(debug=True) 
+
+
+
+import numpy as np
+from flask import Flask, render_template, request, jsonify, json
+from scipy.stats import norm
+import QuantLib as ql
+
+app= Flask(__name__)
+    
+print("hi")
+@app.route('/Blackscholes_model')
+def index():
+    title="Options Pricer"
+    return render_template("main.html", title=title)
+
+N = norm.cdf
+
+@app.route('/Blackscholes_model_form', methods=['GET','POST'])
+#main function
+def BS_data():
+
+    risk=[ [[7,9,2022], [20,6,2024], 79.5, 84, 0.181, 0.0116, [[[7,3,2023],2.63]]  ,False ,True] ,
+    [[7,9,2022], [20,6,2024], 34.5, 84, 0.181, 0.0116, [[[7,3,2023],2.63]]  ,False ,False] ,[[7,9,2022], [20,6,2024], 29.5, 84, 0.181, 0.0116, [[[7,3,2023],2.63]]  ,False ,False], 
+    [[7,9,2022], [20,6,2024], 56.5, 84, 0.181, 0.0116, [[[7,3,2023],2.63]]  ,False ,False]  ]
+
+    Multiple= [2,-2,2,-3]
+
+#by decklaring the function_return_result list before for loop helps to capture the values returning by the function inside the foor loop
+    function_return_result=[]
+
+    for i in risk:
+        for j in i:
+            v_d=(i[0])
+            e_d=(i[1])
+            u_p=(i[2])
+            s_p=(i[3])
+            vl=(i[4])
+            r_f=(i[5])
+            div=(i[6])
+            Is_A=(i[7])
+            Is_c=(i[8])
+            
+        function_return_result.append(get_option_price(v_d , e_d , u_p, s_p, vl , r_f, div, Is_A, Is_c))
+    
+    print(function_return_result)
+    option_price_value =  list(map(float, function_return_result))
+    
+    option_price_value_result=  np.multiply(option_price_value, Multiple)
+    
+    final_option_value= "{0:.2f}".format(sum(option_price_value_result))
+    print((final_option_value))
+
+    return jsonify({'status':final_option_value})
+
+def get_option_price(valuation_date, expiry_date, underlying_price, strike_price, volatility, risk_free_rate, dividends, is_american, is_call):
+    
+    new_value= 0
+    div_dates = []
+    div_values = []
+    
+    for div in dividends:
+        date = div[0]
+        value = div[1]
+        div_values.append(value)
+        div_dates.append(ql.Date(*date))
+
+        # Reformat dates from list into QL date format
+    valuation_date = ql.Date(*valuation_date)
+    expiry_date = ql.Date(*expiry_date)
+    ql.Settings.instance().setEvaluationDate(valuation_date)
+    day_count = ql.Actual365Fixed()
+    calendar = ql.UnitedStates()
+
+        # Reformat prices and rates from list into QL format
+    underlying_price = ql.QuoteHandle(ql.SimpleQuote(underlying_price))
+    risk_free_rate = ql.YieldTermStructureHandle(ql.FlatForward(valuation_date, risk_free_rate, day_count))
+    volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(valuation_date, calendar, volatility, day_count))
+
+        # Create option
+    if is_call:
+        payoff = ql.PlainVanillaPayoff(ql.Option.Call, strike_price)
+    else:
+        payoff = ql.PlainVanillaPayoff(ql.Option.Put, strike_price)
+    if is_american:
+        exercise = ql.AmericanExercise(valuation_date, expiry_date)
+    else:
+        exercise = ql.EuropeanExercise(expiry_date)
+    option = ql.DividendVanillaOption(payoff, exercise, div_dates,div_values)
+
+        # Black Scholes process
+    process = ql.BlackScholesProcess(underlying_price,risk_free_rate,volatility)
+
+        # Create option's pricing engine
+    precision_steps = 1000
+    engine = ql.FdBlackScholesVanillaEngine(process, precision_steps, precision_steps - 1)
+    option.setPricingEngine(engine)
+
+        # Price the option
+    new_value="{0:.2f}".format(option.NPV())
+
+    return new_value
+
+app.run(port=4004,  host='0.0.0.0', debug=True)
+ 
+

@@ -1,0 +1,646 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+<html>
+<title>BLPAPI C++</title>
+<html>
+<pre>
+/* Copyright 2019. Bloomberg Finance L.P.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the &quot;Software&quot;), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:  The above
+ * copyright notice and this permission notice shall be included in all copies
+ * or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
+// blpapi_messageformatter.h                                          -*-C++-*-
+#ifndef INCLUDED_BLPAPI_MESSAGEFORMATTER
+#define INCLUDED_BLPAPI_MESSAGEFORMATTER
+
+//@PURPOSE: Format messages for publishing
+//
+//@CLASSES:
+// blpapi::test::MessageFormatter: A Mechanism to format messages.
+//
+//@DESCRIPTION: This component formats messages.
+//
+/// Limitations
+///-----
+// Currently, the JSON and XML formatting methods have some known limitations.
+//
+// The parsers can not differentiate complex field types
+// (sequences, choices, arrays) that are empty with complex field types that
+// are missing / null. These fields are dropped and absent in the message
+// contents.
+//
+// Enumerations of type &quot;Datetime&quot;, or any &quot;Datetime&quot; element with timezone
+// offset or sub-microsecond precision (e.g. nanoseconds) are not supported.
+
+#ifndef INCLUDED_BLPAPI_CALL
+#include &lt;blpapi_call.h&gt;
+#endif
+
+#ifndef INCLUDED_BLPAPI_DEFS
+#include &lt;blpapi_defs.h&gt;
+#endif
+
+#ifndef INCLUDED_BLPAPI_EVENT
+#include &lt;blpapi_event.h&gt;
+#endif
+
+#ifndef INCLUDED_BLPAPI_TOPIC
+#include &lt;blpapi_topic.h&gt;
+#endif
+
+#ifndef INCLUDED_BLPAPI_TYPES
+#include &lt;blpapi_types.h&gt;
+#endif
+
+#ifdef __cplusplus
+extern &quot;C&quot; {
+#endif
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_setValueBool(blpapi_MessageFormatter_t *formatter,
+        const blpapi_Name_t *typeName,
+        blpapi_Bool_t value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_setValueChar(blpapi_MessageFormatter_t *formatter,
+        const blpapi_Name_t *typeName,
+        char value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_setValueInt32(blpapi_MessageFormatter_t *formatter,
+        const blpapi_Name_t *typeName,
+        blpapi_Int32_t value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_setValueInt64(blpapi_MessageFormatter_t *formatter,
+        const blpapi_Name_t *typeName,
+        blpapi_Int64_t value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_setValueFloat32(
+        blpapi_MessageFormatter_t *formatter,
+        const blpapi_Name_t *typeName,
+        blpapi_Float32_t value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_setValueFloat64(
+        blpapi_MessageFormatter_t *formatter,
+        const blpapi_Name_t *typeName,
+        blpapi_Float64_t value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_setValueDatetime(
+        blpapi_MessageFormatter_t *formatter,
+        const blpapi_Name_t *typeName,
+        const blpapi_Datetime_t *value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_setValueHighPrecisionDatetime(
+        blpapi_MessageFormatter_t *formatter,
+        const blpapi_Name_t *typeName,
+        const blpapi_HighPrecisionDatetime_t *value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_setValueString(
+        blpapi_MessageFormatter_t *formatter,
+        const blpapi_Name_t *typeName,
+        const char *value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_setValueFromName(
+        blpapi_MessageFormatter_t *formatter,
+        const blpapi_Name_t *typeName,
+        const blpapi_Name_t *value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_setValueNull(
+        blpapi_MessageFormatter_t *formatter, const blpapi_Name_t *typeName);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_pushElement(
+        blpapi_MessageFormatter_t *formatter, const blpapi_Name_t *typeName);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_popElement(blpapi_MessageFormatter_t *formatter);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_appendValueBool(
+        blpapi_MessageFormatter_t *formatter, blpapi_Bool_t value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_appendValueChar(
+        blpapi_MessageFormatter_t *formatter, char value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_appendValueInt32(
+        blpapi_MessageFormatter_t *formatter, blpapi_Int32_t value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_appendValueInt64(
+        blpapi_MessageFormatter_t *formatter, blpapi_Int64_t value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_appendValueFloat32(
+        blpapi_MessageFormatter_t *formatter, blpapi_Float32_t value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_appendValueFloat64(
+        blpapi_MessageFormatter_t *formatter, blpapi_Float64_t value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_appendValueDatetime(
+        blpapi_MessageFormatter_t *formatter, const blpapi_Datetime_t *value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_appendValueHighPrecisionDatetime(
+        blpapi_MessageFormatter_t *formatter,
+        const blpapi_HighPrecisionDatetime_t *value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_appendValueString(
+        blpapi_MessageFormatter_t *formatter, const char *value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_appendValueFromName(
+        blpapi_MessageFormatter_t *formatter, const blpapi_Name_t *value);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_appendElement(
+        blpapi_MessageFormatter_t *formatter);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_FormatMessageJson(
+        blpapi_MessageFormatter_t *formatter, const char *message);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_FormatMessageXml(
+        blpapi_MessageFormatter_t *formatter, const char *message);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_copy(blpapi_MessageFormatter_t **formatter,
+        const blpapi_MessageFormatter_t *original);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_assign(
+        blpapi_MessageFormatter_t **lhs, const blpapi_MessageFormatter_t *rhs);
+
+BLPAPI_EXPORT
+int blpapi_MessageFormatter_destroy(blpapi_MessageFormatter_t *formatter);
+
+#ifdef __cplusplus
+} // extern &quot;C&quot;
+
+namespace BloombergLP {
+namespace blpapi {
+namespace test {
+
+// ======================
+// class MessageFormatter
+// ======================
+
+class MessageFormatter {
+    // &#39;MessageFormatter&#39; is used to populate/format a message. It supports
+    // writing once only to each field. Attempting to set an already set
+    // element will fail.
+    //
+    // Note that the behavior is undefined if
+    // - A message formatted with &#39;formatMessageJson()&#39; or
+    //  &#39;formatMessageXml()&#39; is further formatted.
+    // - A message formatted with &#39;set...()&#39; or &#39;append...()&#39; is further
+    //   formatted using &#39;formatMessageJson()/formatMessageXml()&#39;.
+
+  private:
+    blpapi_MessageFormatter_t *d_handle;
+
+  public:
+    // CREATORS
+    explicit MessageFormatter(blpapi_MessageFormatter_t *handle);
+    // Creates &#39;MessageFormatter&#39; from &#39;handle&#39; and takes ownership of the
+    // &#39;handle&#39;.
+
+    MessageFormatter(const MessageFormatter&amp; original);
+    // Creates &#39;MessageFormatter&#39; from &#39;original&#39;. Changes made by one
+    // copy is visible to the other.
+
+    ~MessageFormatter();
+    // Destroy this &#39;MessageFormatter&#39; and release the &#39;d_handle&#39;.
+
+    // MANIPULATORS
+    MessageFormatter&amp; operator=(const MessageFormatter&amp; rhs);
+    // Make this &#39;MessageFormatter&#39; same as &#39;rhs&#39;.
+
+    void setElement(const Name&amp; name, bool value);
+    // Set the element with the specified &#39;name&#39; to the specified &#39;value&#39;
+    // in the current message referenced by this &#39;MessageFormatter&#39;. If the
+    // &#39;name&#39; is invalid for the current message or if the element
+    // identified by &#39;name&#39; has already been set an exception is thrown.
+
+    void setElement(const Name&amp; name, char value);
+    // Set the element with the specified &#39;name&#39; to the specified &#39;value&#39;
+    // in the current message referenced by this &#39;MessageFormatter&#39;. If the
+    // &#39;name&#39; is invalid for the current message or if the element
+    // identified by &#39;name&#39; has already been set an exception is thrown.
+
+    void setElement(const Name&amp; name, Int32 value);
+    // Set the element with the specified &#39;name&#39; to the specified &#39;value&#39;
+    // in the current message referenced by this &#39;MessageFormatter&#39;. If the
+    // &#39;name&#39; is invalid for the current message or if the element
+    // identified by &#39;name&#39; has already been set an exception is thrown.
+
+    void setElement(const Name&amp; name, Int64 value);
+    // Set the element with the specified &#39;name&#39; to the specified &#39;value&#39;
+    // in the current message referenced by this &#39;MessageFormatter&#39;. If the
+    // &#39;name&#39; is invalid for the current message or if the element
+    // identified by &#39;name&#39; has already been set an exception is thrown.
+
+    void setElement(const Name&amp; name, Float32 value);
+    // Set the element with the specified &#39;name&#39; to the specified &#39;value&#39;
+    // in the current message referenced by this &#39;MessageFormatter&#39;. If the
+    // &#39;name&#39; is invalid for the current message or if the element
+    // identified by &#39;name&#39; has already been set an exception is thrown.
+
+    void setElement(const Name&amp; name, Float64 value);
+    // Set the element with the specified &#39;name&#39; to the specified &#39;value&#39;
+    // in the current message referenced by this &#39;MessageFormatter&#39;. If the
+    // &#39;name&#39; is invalid for the current message or if the element
+    // identified by &#39;name&#39; has already been set an exception is thrown.
+
+    void setElement(const Name&amp; name, const Datetime&amp; value);
+    // Set the element with the specified &#39;name&#39; to the specified &#39;value&#39;
+    // in the current message referenced by this &#39;MessageFormatter&#39;. If the
+    // &#39;name&#39; is invalid for the current message or if the element
+    // identified by &#39;name&#39; has already been set an exception is thrown.
+
+    void setElement(const Name&amp; name, const Datetime::HighPrecision&amp; value);
+    // Set the element with the specified &#39;name&#39; to the specified &#39;value&#39;
+    // in the current message referenced by this &#39;MessageFormatter&#39;. If the
+    // &#39;name&#39; is invalid for the current message or if the element
+    // identified by &#39;name&#39; has already been set an exception is thrown.
+
+    void setElement(const Name&amp; name, const char *value);
+    // Set the element with the specified &#39;name&#39; to the specified &#39;value&#39;
+    // in the current message referenced by this &#39;MessageFormatter&#39;. If the
+    // &#39;name&#39; is invalid for the current message, or if the element
+    // identified by &#39;name&#39; has already been set an exception is thrown.
+    // The behavior is undefined unless &#39;value&#39; is not &#39;NULL&#39;.
+    // Clients wishing to format null values (e.g. for the purpose of cache
+    // management) should *not* use this function; use &#39;setElementNull&#39;
+    // instead.
+
+    void setElement(const Name&amp; name, const Name&amp; value);
+    // Set the element with the specified &#39;name&#39; to the specified &#39;value&#39;
+    // in the current message referenced by this &#39;MessageFormatter&#39;. If the
+    // &#39;name&#39; is invalid for the current message or if the element
+    // identified by &#39;name&#39; has already been set an exception is thrown.
+
+    void setElementNull(const Name&amp; name);
+    // Create a null element with the specified &#39;name&#39;.  Note that whether
+    // or not fields containing null values are published to subscribers is
+    // dependent upon details of the service and schema configuration.  If
+    // the &#39;name&#39; is invalid for the current message or if the element
+    // identified by &#39;name&#39; has already been set an exception is thrown.
+
+    void pushElement(const Name&amp; name);
+    // Change the level at which this &#39;MessageFormatter&#39; is operating to
+    // the specified element &#39;name&#39;.  The element &#39;name&#39; must identify
+    // either a choice, a sequence or an array at the current level of the
+    // schema or the behavior is undefined.  If the &#39;name&#39; is invalid for
+    // the current message or if the element identified by &#39;name&#39; has
+    // already been set an exception is thrown.
+    //
+    // After this returns, the context of the &#39;MessageFormatter&#39; is set to
+    // the element &#39;name&#39; in the schema and any calls to &#39;setElement()&#39; or
+    // &#39;pushElement()&#39; are applied at that level.
+    //
+    // If &#39;name&#39; represents an array of scalars then &#39;appendValue()&#39;
+    // must be used to add values.
+    //
+    // If &#39;name&#39; represents an array of complex types then &#39;appendElement()&#39;
+    // must be used.
+
+    void popElement();
+    // Undo the most recent call to &#39;pushElement()&#39; or &#39;appendElement()&#39; on
+    // this &#39;MessageFormatter&#39; and return the context of the
+    // &#39;MessageFormatter&#39; to where it was before the call to
+    // &#39;pushElement()&#39; or &#39;appendElement()&#39;. Once &#39;popElement()&#39; has been
+    // called it is invalid to attempt to re-visit the same context.
+
+    void appendValue(bool value);
+    // Append the specified &#39;value&#39; to element on which this
+    // &#39;MessageFormatter&#39; is operating.  Throw an exception if the schema
+    // of the message is flat or the current element to which &#39;value&#39; is
+    // appended is not an array.
+
+    void appendValue(char value);
+    // Append the specified &#39;value&#39; to element on which this
+    // &#39;MessageFormatter&#39; is operating. Throw an exception if the schema of
+    // the message is flat or the current element to which &#39;value&#39; is
+    // appended is not an array.
+
+    void appendValue(Int32 value);
+    // Append the specified &#39;value&#39; to element on which this
+    // &#39;MessageFormatter&#39; is operating. Throw an exception if the schema of
+    // the message is flat or the current element to which &#39;value&#39; is
+    // appended is not an array.
+
+    void appendValue(Int64 value);
+    // Append the specified &#39;value&#39; to element on which this
+    // &#39;MessageFormatter&#39; is operating. Throw an exception if the schema of
+    // the message is flat or the current element to which &#39;value&#39; is
+    // appended is not an array.
+
+    void appendValue(Float32 value);
+    // Append the specified &#39;value&#39; to element on which this
+    // &#39;MessageFormatter&#39; is operating. Throw an exception if the schema of
+    // the message is flat or the current element to which &#39;value&#39; is
+    // appended is not an array.
+
+    void appendValue(Float64 value);
+    // Append the specified &#39;value&#39; to element on which this
+    // &#39;MessageFormatter&#39; is operating. Throw an exception if the schema of
+    // the message is flat or the current element to which &#39;value&#39; is
+    // appended is not an array.
+
+    void appendValue(const Datetime&amp; value);
+    // Append the specified &#39;value&#39; to element on which this
+    // &#39;MessageFormatter&#39; is operating. Throw an exception if the schema of
+    // the message is flat or the current element to which &#39;value&#39; is
+    // appended is not an array.
+
+    void appendValue(const Datetime::HighPrecision&amp; value);
+    // Append the specified &#39;value&#39; to element on which this
+    // &#39;MessageFormatter&#39; is operating. Throw an exception if the schema of
+    // the message is flat or the current element to which &#39;value&#39; is
+    // appended is not an array.
+
+    void appendValue(const char *value);
+    // Append the specified &#39;value&#39; to element on which this
+    // &#39;MessageFormatter&#39; is operating. Throw an exception if the schema of
+    // the message is flat or the current element to which &#39;value&#39; is
+    // appended is not an array.
+
+    void appendValue(const Name&amp; value);
+    // Append the specified &#39;value&#39; to element on which this
+    // &#39;MessageFormatter&#39; is operating. Throw an exception if the schema of
+    // the message is flat or the current element to which &#39;value&#39; is
+    // appended is not an array.
+
+    void appendElement();
+    // Create an array element and append it to the element on which this
+    // &#39;MessageFormatter&#39; is operating on. Throw an exception if the schema
+    // of the message is flat or the current element to which &#39;value&#39; is
+    // appended is not an array, a sequence or a choice.
+
+    void formatMessageJson(const char *message);
+    // Format the message from its &#39;JSON&#39; representation.
+    // An exception is thrown if the method fails to format the message.
+    // The behavior is undefined if further formatting is done using
+    // this &#39;MessageFormatter&#39;.
+
+    void formatMessageXml(const char *message);
+    // Format the message from its &#39;XML&#39; representation.
+    // An exception is thrown if the method fails to format the message.
+    // The behavior is undefined if further formatting is done using
+    // this &#39;MessageFormatter&#39;.
+
+    // ACCESSORS
+    blpapi_MessageFormatter_t *impl() const;
+    // Returns underlying implementation of &#39;MessageFormatter&#39;. For
+    // *internal* use only.
+};
+
+// ============================================================================
+//                      INLINE AND TEMPLATE FUNCTION IMPLEMENTATIONS
+// ============================================================================
+
+// ----------------------
+// class MessageFormatter
+// ----------------------
+
+inline MessageFormatter::MessageFormatter(blpapi_MessageFormatter_t *handle)
+    : d_handle(handle)
+{
+}
+
+inline MessageFormatter::~MessageFormatter()
+{
+    if (d_handle) {
+        BLPAPI_CALL_UNCHECKED(blpapi_MessageFormatter_destroy)(d_handle);
+    }
+}
+
+inline MessageFormatter::MessageFormatter(const MessageFormatter&amp; original)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(blpapi_MessageFormatter_copy)(
+            &amp;d_handle, original.impl()));
+}
+
+inline MessageFormatter&amp; MessageFormatter::operator=(
+        const MessageFormatter&amp; rhs)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(blpapi_MessageFormatter_assign)(
+            &amp;d_handle, rhs.impl()));
+    return *this;
+}
+
+inline void MessageFormatter::setElement(const Name&amp; name, bool value)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_setValueBool)(
+                    d_handle, name.impl(), value));
+}
+
+inline void MessageFormatter::setElement(const Name&amp; name, char value)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_setValueChar)(
+                    d_handle, name.impl(), value));
+}
+
+inline void MessageFormatter::setElement(const Name&amp; name, Int32 value)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_setValueInt32)(
+                    d_handle, name.impl(), value));
+}
+
+inline void MessageFormatter::setElement(const Name&amp; name, Int64 value)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_setValueInt64)(
+                    d_handle, name.impl(), value));
+}
+
+inline void MessageFormatter::setElement(const Name&amp; name, Float32 value)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_setValueFloat32)(
+                    d_handle, name.impl(), value));
+}
+inline void MessageFormatter::setElement(const Name&amp; name, Float64 value)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_setValueFloat64)(
+                    d_handle, name.impl(), value));
+}
+inline void MessageFormatter::setElement(
+        const Name&amp; name, const Datetime&amp; value)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_setValueDatetime)(
+                    d_handle, name.impl(), &amp;value.rawValue()));
+}
+
+inline void MessageFormatter::setElement(
+        const Name&amp; name, const Datetime::HighPrecision&amp; value)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_setValueHighPrecisionDatetime)(
+                    d_handle, name.impl(), &amp;value));
+}
+
+inline void MessageFormatter::setElement(const Name&amp; name, const char *value)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_setValueString)(
+                    d_handle, name.impl(), value));
+}
+inline void MessageFormatter::setElement(const Name&amp; name, const Name&amp; value)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_setValueFromName)(
+                    d_handle, name.impl(), value.impl()));
+}
+
+inline void MessageFormatter::setElementNull(const Name&amp; name)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(
+            blpapi_MessageFormatter_setValueNull)(d_handle, name.impl()));
+}
+
+inline void MessageFormatter::pushElement(const Name&amp; name)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(
+            blpapi_MessageFormatter_pushElement)(d_handle, name.impl()));
+}
+
+inline void MessageFormatter::popElement()
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_popElement)(d_handle));
+}
+
+inline void MessageFormatter::appendValue(bool value)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(
+            blpapi_MessageFormatter_appendValueBool)(d_handle, value));
+}
+
+inline void MessageFormatter::appendValue(char value)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(
+            blpapi_MessageFormatter_appendValueChar)(d_handle, value));
+}
+
+inline void MessageFormatter::appendValue(Int32 value)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(
+            blpapi_MessageFormatter_appendValueInt32)(d_handle, value));
+}
+
+inline void MessageFormatter::appendValue(Int64 value)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(
+            blpapi_MessageFormatter_appendValueInt64)(d_handle, value));
+}
+
+inline void MessageFormatter::appendValue(Float32 value)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(
+            blpapi_MessageFormatter_appendValueFloat32)(d_handle, value));
+}
+
+inline void MessageFormatter::appendValue(Float64 value)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(
+            blpapi_MessageFormatter_appendValueFloat64)(d_handle, value));
+}
+
+inline void MessageFormatter::appendValue(const Datetime&amp; value)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_appendValueDatetime)(
+                    d_handle, &amp;value.rawValue()));
+}
+
+inline void MessageFormatter::appendValue(const Datetime::HighPrecision&amp; value)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(
+            blpapi_MessageFormatter_appendValueHighPrecisionDatetime)(
+            d_handle, &amp;value));
+}
+
+inline void MessageFormatter::appendValue(const char *value)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(
+            blpapi_MessageFormatter_appendValueString)(d_handle, value));
+}
+
+inline void MessageFormatter::appendValue(const Name&amp; value)
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_appendValueFromName)(
+                    d_handle, value.impl()));
+}
+
+inline void MessageFormatter::appendElement()
+{
+    ExceptionUtil::throwOnError(
+            BLPAPI_CALL(blpapi_MessageFormatter_appendElement)(d_handle));
+}
+
+inline blpapi_MessageFormatter_t *MessageFormatter::impl() const
+{
+    return d_handle;
+}
+
+inline void MessageFormatter::formatMessageJson(const char *message)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(
+            blpapi_MessageFormatter_FormatMessageJson)(d_handle, message));
+}
+
+inline void MessageFormatter::formatMessageXml(const char *message)
+{
+    ExceptionUtil::throwOnError(BLPAPI_CALL(
+            blpapi_MessageFormatter_FormatMessageXml)(d_handle, message));
+}
+
+} // close namespace test
+
+// *Deprecated*
+// Following typedef is provided for backwards compatibility. It will be
+// removed in a future release.
+typedef test::MessageFormatter MessageFormatter;
+
+} // close namespace blpapi
+} // close namespace BloombergLP
+
+#endif // #ifdef __cplusplus
+#endif // #ifndef INCLUDED_BLPAPI_MESSAGEFORMATTER
+</pre>
+</body>
+</html>

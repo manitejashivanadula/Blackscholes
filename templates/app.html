@@ -1,0 +1,37 @@
+
+<html lang="en">
+     <head>
+          <title> {% block title %} {{title}} {% endblock %} </title>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          
+          
+                     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+                     <link href="https://getbootstrap.com/docs/5.2/assets/css/docs.css" rel="stylesheet">
+          
+        <!-- for Add new button-->
+                     <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+                  
+                  
+        <!-- For modal -->
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>   
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+                    
+         <!-- For Search Icon -->           
+                    <script src="https://kit.fontawesome.com/6ec9c7cfba.js" crossorigin="anonymous"> </script>
+                        
+         <!-- For Display datatable -->                
+                   <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"> </script>
+                   <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"> </script>   
+                   <link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet">
+                                       
+    </head>   
+     <body>
+          {% block content %} 
+          {% endblock %}
+     </body>
+ </html>
+
+
+
