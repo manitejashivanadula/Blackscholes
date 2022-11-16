@@ -7,7 +7,7 @@
     <style>
         .navbar {
           margin: auto;
-          color:white;
+          color:#99ffe6;
           }
         tbody, td, tfoot, th, thead, tr { 
            border-color: null;
@@ -18,9 +18,11 @@
 <!-- Navbar -->
 <nav class="navbar bg-black">
       <div class="navbar" >
-      <h5> Option Pricer <h5>
+          <h3> OPTIONS PRICER <h3>
       </div>
 </nav>  
+
+
  
 <div class=" container-fluid py-1">
   <!-- Option input table -->
@@ -66,7 +68,7 @@
                    </thead>
                    <tbody id="table_body">
                        <tr id="tr_row">
-                               <td> <input type="Number" id="Multiple" class="form-control">      </td>
+                               <td> <input type="Number" id="Multiple" class="form-control" required>      </td>
                                
                                <td> <input type="Text" class="form-control" id="Ticker_value"  placeholder="Ticker" required>      </td>
                                
@@ -86,7 +88,7 @@
                                             <option value="" selected="selected">Select option</option>
                                        </select> </td>        
                               
-                              <td> <input type="integer" class="form-control" id="Spotprice"  placeholder="Spot"  >      </td>
+                              <td> <input type="integer" class="form-control" id="Spotprice"  placeholder="Spot" required >      </td>
                               
                               <td> <div class="input-group">
                                       <input type="text" class="form-control" id="Strikeprice" placeholder="Strike" required>
@@ -96,7 +98,7 @@
                                       </div>
                                     </div> </td>
                               
-                              <td> <select id="List_of_Strikes" class="btn dropdown-toggle" >
+                              <td> <select id="List_of_Strikes" class="btn dropdown-toggle" required >
                                          <option value="" selected="selected">Select option</option>
                                     </select> </td> 
                               
@@ -106,9 +108,9 @@
         
                                <td><input type="text" class="form-control" id="Bid_vol" placeholder="Bid vol" ></td>                               
                                
-                               <td> <input type="text" class="form-control" id="Bid_price" placeholder="Bid " > </td>
+                               <td> <input type="text" class="form-control" id="Bid_price" placeholder="Bid" required > </td>
                                
-                               <td> <input type="text" class="form-control" id="Ask_price" placeholder="Ask " ></td>
+                               <td> <input type="text" class="form-control" id="Ask_price" placeholder="Ask" required ></td>
                               
                               <td> <input type="text" class="form-control" id="Ask_vol" placeholder="Ask vol" ></td>
 
@@ -118,6 +120,7 @@
                         </tr>  
                     </tbody>      
               </table> 
+              <button   type="button" id="bloom_interest_rates" class="btn btn-secondary btn-md" style="float: right">Rates</button>
               <button   type="button" id="bloom_refresh" class="btn btn-secondary btn-md" style="float: right">Refresh</button>    
             <button type="submit" id="eu_option_button" class="btn btn-primary btn-md" style="float: right">Calculate</button>  
          </form> 
@@ -233,17 +236,24 @@ var maturity=document.getElementById("Maturity");
  
 <!-- Funciton for Adding new row by cloning the previous row and also emptying the required newly cloned rows   --> 
 $('#add_more_item').click(function(e) {
-        $latest_tr= $('#datatable tr:last');
-        $clone= $latest_tr.clone();
-        $latest_tr.after($clone);
-        $clone.find('#Multiple').val('');
-        $clone.find('#Strikeprice').val('');
-        $clone.find('#Volatility').val(''); 
-        $clone.find('#Bid_price').val('');  
-        $clone.find('#Ask_price').val('');   
-        $clone.find('#Volatility').val('');   
-        $clone.find('#Bid_vol').val('');
-        $clone.find('#Ask_vol').val('');
+        let ticker_name=   document.getElementById("Ticker_value").value;
+        
+        if(ticker_name==''){
+            alert("Enter the valid Ticker")
+        }
+        else{
+            $latest_tr= $('#datatable tr:last');
+            $clone= $latest_tr.clone();
+            $latest_tr.after($clone);
+            $clone.find('#Multiple').val('');
+            $clone.find('#Strikeprice').val('');
+            $clone.find('#Volatility').val(''); 
+            $clone.find('#Bid_price').val('');  
+            $clone.find('#Ask_price').val('');   
+            $clone.find('#Volatility').val('');   
+            $clone.find('#Bid_vol').val('');
+            $clone.find('#Ask_vol').val('');
+        }
  });
     
     
@@ -362,6 +372,22 @@ $('#Update_button').click(function(e) {
  });   
  
  
+ 
+  
+<!-- Code to make all the input fields of spot_price as same-->  
+$('#Spotprice').on('keyup', function() {
+      
+     var new_spot_price=  document.getElementById("Spotprice").value;
+
+     $.each($("#table_body #tr_row"),function(){                 
+          $(this).find("#Spotprice").val(new_spot_price);
+     }); 
+});
+
+ 
+ 
+ 
+ 
 <!--Submitting the data to the python  --> 
 document.getElementById('postForm').addEventListener('submit', getJsonData);
 
@@ -478,125 +504,142 @@ document.getElementById('postForm').addEventListener('submit', getJsonData);
      
         let ticker_name=   document.getElementById("ticker_data").value;
         
-        Maturity_array= ['11/18/22', '12/16/22', '01/20/23', '02/17/23', '03/17/23', '04/21/23', '05/19/23', '06/16/23', '07/21/23', '08/18/23', '09/15/23', '10/20/23', '11/17/23', '12/15/23', '01/19/24', '02/16/24', '03/15/24', '04/19/24', '05/17/24', '06/21/24', '07/19/24', '08/16/24', '09/20/24', '10/18/24', '11/15/24', '12/20/24', '01/17/25', '02/21/25', '03/21/25', '04/18/25', '05/16/25', '06/20/25', '07/18/25', '08/15/25', '09/19/25', '10/17/25', '11/21/25', '12/19/25']
+        if(ticker_name==''){
+           alert("Enter the valid Ticker")
+        }
+        else{
         
-         $("#Maturity").html('');
-   
-         for(var i = 0; i < Maturity_array.length; i++) {
-             var opt = Maturity_array[i];
-             var el = document.createElement("option");
-             el.textContent = opt;
-             el.value = opt;
-             maturity.appendChild(el);
-         }           
-                 
-             const xhr= new XMLHttpRequest();
-             xhr.open('post','/Blackscholes_bloomberg_apicall',true);  
-             xhr.setRequestHeader('content-type','application/json');
-               
-         xhr.onload = function(){
-             
-               if(xhr.status === 200) { 
-                  var new_data=JSON.parse(this.responseText);
-                  
-                  console.log(new_data.Spot_Price)
+            Maturity_array= ['11/18/22', '12/16/22', '01/20/23', '02/17/23', '03/17/23', '04/21/23', '05/19/23', '06/16/23', '07/21/23', '08/18/23', '09/15/23', '10/20/23', '11/17/23', '12/15/23', '01/19/24', '02/16/24', '03/15/24', '04/19/24', '05/17/24', '06/21/24', '07/19/24', '08/16/24', '09/20/24', '10/18/24', '11/15/24', '12/20/24', '01/17/25', '02/21/25', '03/21/25', '04/18/25', '05/16/25', '06/20/25', '07/18/25', '08/15/25', '09/19/25', '10/17/25', '11/21/25', '12/19/25']
+            
+           $("#Maturity").html('');
+            
+          for(var i = 0; i < Maturity_array.length; i++) {
+               var opt = Maturity_array[i];
+               var el = document.createElement("option");
+                el.textContent = opt;
+               el.value = opt;
+               maturity.appendChild(el);
+           }      
 
-                  div_date_array =  new_data.Dividend_date;
-                  divdata_array =  new_data.Dividend_rate;
-                  Reset_array =  new_data.Dividend_rate;
-                                    document.getElementById('market_spot_input').value= new_data.Spot_price
-                  $("#Dividend_date").html('');  
+                 const xhr= new XMLHttpRequest();
+                 xhr.open('post','/Blackscholes_bloomberg_apicall',true);  
+                 xhr.setRequestHeader('content-type','application/json');
+                   
+             xhr.onload = function(){
                  
- //for appending the value to the html element   
-                 $.each($("#table_body #tr_row"),function(){
-                 
-                     $(this).find("#Ticker_value").val(new_data.Ticker)
+                   if(xhr.status === 200) { 
+                      var new_data=JSON.parse(this.responseText);
+                      
+                      console.log(new_data.Spot_Price)
+
+                      div_date_array =  new_data.Dividend_date;
+                      divdata_array =  new_data.Dividend_rate;
+                      Reset_array =  new_data.Dividend_rate;
+                      document.getElementById('market_spot_input').value= new_data.Spot_price
+                      $("#Dividend_date").html('');  
                      
- //THIS IS FOR WHEN YOU ENTER NEW TICKER THE FIELDS OF STRIKE AND LIST OF STRIKES WILL BECOME EMPTY                    
-                     $(this).find("#List_of_Strikes").val('')
-                     $(this).find("#Strikeprice").val('')
-                     $(this).find("#Ask_price").val('')
-                     $(this).find("#Bid_price").val('') 
-                     $(this).find("#Volatility").val('')  
-                     $(this).find("#Bid_vol").val('')
-                     $(this).find("#Ask_vol").val('')           
-                   });
-               }
-          }     
-       xhr.send(JSON.stringify(ticker_name));         
+     //for appending the value to the html element   
+                     $.each($("#table_body #tr_row"),function(){
+                     
+                         $(this).find("#Ticker_value").val(new_data.Ticker)
+                         
+     //THIS IS FOR WHEN YOU ENTER NEW TICKER THE FIELDS OF STRIKE AND LIST OF STRIKES WILL BECOME EMPTY                    
+                         $(this).find("#List_of_Strikes").val('')
+                         $(this).find("#Strikeprice").val('')
+                         $(this).find("#Ask_price").val('')
+                         $(this).find("#Bid_price").val('') 
+                         $(this).find("#Volatility").val('')  
+                         $(this).find("#Bid_vol").val('')
+                         $(this).find("#Ask_vol").val('')    
+                         $(this).find("#Spotprice").val('')       
+                       });
+                   }
+              }     
+           xhr.send(JSON.stringify(ticker_name));         
+        
+        }
+        
  } 
      
  
-<!-- AJAX CALL FOR SENDING THE STRIKE, TICKER AND RECEIVING THE BLOOM OPTIONS STRIKE PRICES  -->
+<!-- AJAX CALL FOR SENDING THE STRIKE, TICKER AND RECEIVING THE LIST_OF_STRIKES  -->
 $(document).on('click','#Strikeprice_button', function() {
-     
-        var index= $(this).closest('tr').get(0).rowIndex;
-     
-        let Py_ticker_name, Py_Maturity_date, Py_type, Py_strike = 0
+
+   let Strikeprice_search_button=   document.getElementById("Strikeprice").value;
         
-        Py_ticker_name =     document.getElementById('ticker_data').value;
-        
-        $.each($("#table_body #tr_row"),function(){
-             var strike_box = $(this).closest('tr').index()+1; 
-                          
-             if(strike_box==index){         
- 
-                    Py_Maturity_date =   $(this).find("#Maturity").val()
-                    Py_type =            $(this).find("#Option_type_data").val()
-                    Py_strike =          $(this).find("#Strikeprice").val()
-                         
-                    if(Py_type==1){
-                        Py_type='C';
-                    }
-                    else{
-                        Py_type='P';
-                    }
-                }
-         });
+   if(Strikeprice_search_button==''){
+        alert("Enter the strike")
+   }
+   else{
+     
+            var index= $(this).closest('tr').get(0).rowIndex;
          
-          var strike_value= Py_Maturity_date + ' ' + Py_type + Py_strike + ' ' + 'Equity';
-          
-          var Strike_array=[]
-          
-          let Strike_item= {
-                         Strike_value :   strike_value,
-                         Ticker_name  :   Py_ticker_name,
-                          }
-                    Strike_array.push(Strike_item)                  
+            let Py_ticker_name, Py_Maturity_date, Py_type, Py_strike = 0
+            
+            Py_ticker_name =     document.getElementById('ticker_data').value;
+            
+            $.each($("#table_body #tr_row"),function(){
+                 var strike_box = $(this).closest('tr').index()+1; 
+                              
+                 if(strike_box==index){         
+     
+                        Py_Maturity_date =   $(this).find("#Maturity").val()
+                        Py_type =            $(this).find("#Option_type_data").val()
+                        Py_strike =          $(this).find("#Strikeprice").val()
+                             
+                        if(Py_type==1){
+                            Py_type='C';
+                        }
+                        else{
+                            Py_type='P';
+                        }
+                    }
+             });
+             
+              var strike_value= Py_Maturity_date + ' ' + Py_type + Py_strike + ' ' + 'Equity';
+              
+              var Strike_array=[]
+              
+              let Strike_item= {
+                             Strike_value :   strike_value,
+                             Ticker_name  :   Py_ticker_name,
+                              }
+                        Strike_array.push(Strike_item)                  
                  
 //OPTION STRIKES API CONNECTION 
        
-          const xhr= new XMLHttpRequest();
-          xhr.open('post','/Blackscholes_bloomberg_strikecall',true);  
-          xhr.setRequestHeader('content-type','application/json');
-        
-          xhr.onload = function(){
-                
-                var new_data=JSON.parse(this.responseText);
+              const xhr= new XMLHttpRequest();
+              xhr.open('post','/Blackscholes_bloomberg_strikecall',true);  
+              xhr.setRequestHeader('content-type','application/json');
+            
+              xhr.onload = function(){
                     
-                var Bloom_api_strikes= new_data.Bloom_option_strikes_result;
-                   
-                $.each($("#table_body #tr_row"),function(){
-
-                      var strike_box = $(this).closest('tr').index()+1; 
+                    var new_data=JSON.parse(this.responseText);
+                        
+                    var Bloom_api_strikes= new_data.Bloom_option_strikes_result;
+                       
+                    $.each($("#table_body #tr_row"),function(){
+    
+                          var strike_box = $(this).closest('tr').index()+1; 
+                                     
+                           if(strike_box==index){
                                  
-                       if(strike_box==index){
-                             
-                            $List_of_Strikes_datafield =  $(this).find("#List_of_Strikes")
-                              
-                            $List_of_Strikes_datafield.html('');
-                                    
-                            for (var i = 0; i < Bloom_api_strikes.length; i++) {
-                                  var $data = $("<option>", {
-                                  value: Bloom_api_strikes[i],
-                                  }).text(Bloom_api_strikes[i]);
-                                       
-                                  $List_of_Strikes_datafield.append($data);
-                            };                                                            
-                       }                        
-              });       
-         }
-     xhr.send(JSON.stringify(Strike_array));      
+                                $List_of_Strikes_datafield =  $(this).find("#List_of_Strikes")
+                                  
+                                $List_of_Strikes_datafield.html('');
+                                        
+                                for (var i = 0; i < Bloom_api_strikes.length; i++) {
+                                      var $data = $("<option>", {
+                                      value: Bloom_api_strikes[i],
+                                      }).text(Bloom_api_strikes[i]);
+                                           
+                                      $List_of_Strikes_datafield.append($data);
+                                };                                                            
+                           }                        
+                  });       
+             }
+         xhr.send(JSON.stringify(Strike_array));   
+     }    
 });
 
  
@@ -628,41 +671,42 @@ $(document).on("change","#List_of_Strikes",function bid_ask_adding(e){
         xhr.setRequestHeader('content-type','application/json');
    
         xhr.onload = function(e){
-           var new_data=JSON.parse(this.responseText);
-           if(xhr.status === 200) { 
-               
-               var new_data=JSON.parse(this.responseText);
-//one strike selection getting the marketspot value from api call and appending it to the gloabl variable.                      
-               market_spot= new_data.Strike_price_value
     
-               $.each($("#table_body #tr_row"),function(){
-                           
-                    var strike_box = $(this).closest('tr').index()+1; 
-                                     
-                    if(strike_box==index){
-                                 
-                             $(this).find("#Bid_price").val(new_data.Bid_price)
-                             $(this).find("#Ask_price").val(new_data.ASK_Price)
-                             $(this).find("#Volatility").val(new_data.Vol_value)
-                             $(this).find("#Bid_vol").val('')
-                             $(this).find("#Ask_vol").val('')
-                    }    
-               });        
+               var new_data=JSON.parse(this.responseText);
+               
+           if(new_data.Bid_price && new_data.ASK_Price >=0) { 
+
+                      market_spot= new_data.Strike_price_value
+           
+                      $.each($("#table_body #tr_row"),function(){
+                                  
+                           var strike_box = $(this).closest('tr').index()+1; 
+                                            
+                           if(strike_box==index){
+                                        
+                                    $(this).find("#Bid_price").val(new_data.Bid_price)
+                                    $(this).find("#Ask_price").val(new_data.ASK_Price)
+                                    $(this).find("#Volatility").val(new_data.Vol_value)
+                                    $(this).find("#Bid_vol").val('')
+                                    $(this).find("#Ask_vol").val('')
+                           }    
+                      });  
             } 
             else {
-                  alert(" data is not present for current this strike");
-                    
-                  $.each($("#table_body #tr_row"),function(){
-                        
-                         var strike_box = $(this).closest('tr').index()+1; 
-                                  
-                         if(strike_box==index){                              
-                                $(this).find("#Bid_price").val('')
-                                $(this).find("#Ask_price").val('')
-                                $(this).find("#Volatility").val('')
-                         }    
-                 });        
- 
+
+                   alert(" data is not present for current this strike");
+                     
+                   $.each($("#table_body #tr_row"),function(){
+                         
+                          var strike_box = $(this).closest('tr').index()+1; 
+                                   
+                          if(strike_box==index){   
+                          console.log("hi")                           
+                                 $(this).find("#Bid_price").val('')
+                                 $(this).find("#Ask_price").val('')
+                                 $(this).find("#Volatility").val('')
+                          }    
+                  });
              }  
         };
      xhr.send(JSON.stringify(arrayItem));         
@@ -672,61 +716,73 @@ $(document).on("change","#List_of_Strikes",function bid_ask_adding(e){
 <!-- ON REFRESH BUTTON CLICK GET THE LATEST BID, ASK, VOLATILITY AND MARKET SPOT FROM BLOOMBERG -->
 $(document).on('click','#bloom_refresh', function() {
 
-      var arrayItem=[]
+    let ticker_name=   document.getElementById("Ticker_value").value;
+        
+    if(ticker_name==''){
+            alert("Enter the valid Ticker")
+     }
+     else{
 
-      $.each($("#table_body #tr_row"),function(index,value){
-             
-             let strikes_list=  $(this).find("#List_of_Strikes").val()
-             let ticker_name=   document.getElementById("ticker_data").value;
-            
-             let item= {
-                    strikes_list : strikes_list,
-                    ticker_name  : ticker_name
-            }
-          arrayItem.push(item)
-      });
+          var arrayItem=[]
+    
+          $.each($("#table_body #tr_row"),function(index,value){
                  
+                 let strikes_list=  $(this).find("#List_of_Strikes").val()
+                 let ticker_name=   document.getElementById("ticker_data").value;
+                
+                 let item= {
+                        strikes_list : strikes_list,
+                        ticker_name  : ticker_name
+                }
+              arrayItem.push(item)
+          });
+                     
 //creating an XMLHttpRequest
-     const xhr= new XMLHttpRequest();
-     xhr.open('post','/Blackscholes_table_refresh',true);  
-     xhr.setRequestHeader('content-type','application/json');
-          
-     xhr.onload = function(){
-         var new_data=JSON.parse(this.responseText);
-                  
-         var market_option_data= new_data.Option_market_values
-                  
-         market_spot= new_data.Strike_price_value
-         document.getElementById('market_spot_input').value=market_spot
-         document.getElementById('Our_bid_price').value= ''
-         document.getElementById('Our_ask_price').value= ''
-         document.getElementById('option_td_value').value= ''         
-                  
+         const xhr= new XMLHttpRequest();
+         xhr.open('post','/Blackscholes_table_refresh',true);  
+         xhr.setRequestHeader('content-type','application/json');
+              
+         xhr.onload = function(){
+             var new_data=JSON.parse(this.responseText);
+                      
+             var market_option_data= new_data.Option_market_values
+                      
+             market_spot= new_data.Strike_price_value
+             document.getElementById('market_spot_input').value=market_spot
+             document.getElementById('Our_bid_price').value= ''
+             document.getElementById('Our_ask_price').value= ''
+             document.getElementById('option_td_value').value= ''         
+                      
 //console.log(market_option_data)
 console.log(market_spot)
-                  
-         $.each($("#table_body #tr_row"),function(){
-                            
-                var table_row = $(this).closest('tr').index(); 
-                                      
-                for(i=0;i<=market_option_data.length;i++){
-                    
-                    if(table_row==i){
-                            $(this).find("#Volatility").val(market_option_data[i][0])
-                            $(this).find("#Bid_price").val(market_option_data[i][1])
-                            $(this).find("#Ask_price").val(market_option_data[i][2])
-                            $(this).find("#Bid_vol").val('')
-                            $(this).find("#Ask_vol").val('')
+                      
+             $.each($("#table_body #tr_row"),function(){
+                                
+                    var table_row = $(this).closest('tr').index(); 
+                                          
+                    for(i=0;i<=market_option_data.length;i++){
+                        
+                        if(table_row==i){
+                                $(this).find("#Volatility").val(market_option_data[i][0])
+                                $(this).find("#Bid_price").val(market_option_data[i][1])
+                                $(this).find("#Ask_price").val(market_option_data[i][2])
+                                $(this).find("#Bid_vol").val('')
+                                $(this).find("#Ask_vol").val('')
+                        }
                     }
-                }
-         });               
-    
-    
+             });               
+        
+        
+         }
+        xhr.send(JSON.stringify(arrayItem)); 
      }
-    xhr.send(JSON.stringify(arrayItem)); 
 });
  
 
+ 
+
+ 
+ 
  
  
 </script>
