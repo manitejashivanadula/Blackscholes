@@ -670,44 +670,61 @@ $(document).on("change","#List_of_Strikes",function bid_ask_adding(e){
         xhr.open('post','/Blackscholes_bloomberg_bid_ask',true);  
         xhr.setRequestHeader('content-type','application/json');
    
-        xhr.onload = function(e){
-    
-               var new_data=JSON.parse(this.responseText);
-               
-           if(new_data.Bid_price && new_data.ASK_Price >=0) { 
-
-                      market_spot= new_data.Strike_price_value
+        xhr.onload = function(){
            
-                      $.each($("#table_body #tr_row"),function(){
-                                  
-                           var strike_box = $(this).closest('tr').index()+1; 
-                                            
-                           if(strike_box==index){
-                                        
-                                    $(this).find("#Bid_price").val(new_data.Bid_price)
-                                    $(this).find("#Ask_price").val(new_data.ASK_Price)
-                                    $(this).find("#Volatility").val(new_data.Vol_value)
-                                    $(this).find("#Bid_vol").val('')
-                                    $(this).find("#Ask_vol").val('')
-                           }    
-                      });  
-            } 
-            else {
+           try{
+                  var new_data=JSON.parse(this.responseText);
+                  if(xhr.status == 200) { 
 
-                   alert(" data is not present for current this strike");
-                     
-                   $.each($("#table_body #tr_row"),function(){
-                         
-                          var strike_box = $(this).closest('tr').index()+1; 
-                                   
-                          if(strike_box==index){   
-                          console.log("hi")                           
-                                 $(this).find("#Bid_price").val('')
-                                 $(this).find("#Ask_price").val('')
-                                 $(this).find("#Volatility").val('')
-                          }    
-                  });
-             }  
+                             market_spot= new_data.Strike_price_value
+                  
+                             $.each($("#table_body #tr_row"),function(){
+                                         
+                                  var strike_box = $(this).closest('tr').index()+1; 
+                                                   
+                                  if(strike_box==index){
+                                               
+                                           $(this).find("#Bid_price").val(new_data.Bid_price)
+                                           $(this).find("#Ask_price").val(new_data.ASK_Price)
+                                           $(this).find("#Volatility").val(new_data.Vol_value)
+                                           $(this).find("#Bid_vol").val('')
+                                           $(this).find("#Ask_vol").val('')
+                                  }    
+                             });  
+                   } 
+                   else {
+
+                          alert(" data is not present for this current strike");
+                            
+                          $.each($("#table_body #tr_row"),function(){
+                                
+                                 var strike_box = $(this).closest('tr').index()+1; 
+                                          
+                                 if(strike_box==index){                             
+                                        $(this).find("#Bid_price").val('')
+                                        $(this).find("#Ask_price").val('')
+                                        $(this).find("#Volatility").val('')
+                                 }    
+                         });
+                    }     
+           }
+           catch(e){
+                       $.each($("#table_body #tr_row"),function(){
+                                 
+                            var strike_box = $(this).closest('tr').index()+1; 
+                                           
+                             if(strike_box==index){                             
+                                         $(this).find("#Bid_price").val('')
+                                         $(this).find("#Ask_price").val('')
+                                         $(this).find("#Volatility").val('')
+                             }    
+                       });    
+
+                   alert("complete data is not present for this current strike");
+     
+           }  
+               
+ 
         };
      xhr.send(JSON.stringify(arrayItem));         
 });
