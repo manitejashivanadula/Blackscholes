@@ -222,7 +222,7 @@ def BS_data():
         else:
             Our_Adj_Bid=float("{0:.2f}".format(Our_Adj_Bid+(Adj_Ask[i]*Multiple[i])))
 
-    print("Our_Adj_Ask",Our_Adj_Bid)
+    print("Our_Adj_Bid",Our_Adj_Bid)
 
     for i in range(len(Adj_Ask)):
         if(Multiple[i]>=1):
@@ -349,3 +349,4 @@ def get_option_price_1(valuation_date, expiry_date, underlying_price, strike_pri
 
 app.run(port=4004,  host='0.0.0.0', debug=True)
 
+     
