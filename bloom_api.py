@@ -126,7 +126,6 @@ def dvd_hist_all_response_handler(event):
 def Bloom_strike_api():
     
     strike_api_data = request.get_json()
-    
     Strike_data, ticker_data=[],[]
     
     for i in strike_api_data:
@@ -135,11 +134,8 @@ def Bloom_strike_api():
         
     con = pdblp.BCon(timeout=2000)
     con.start()
-
     data=con.bulkref(ticker_data[0] + "Equity"  ,flds=['OPT_CHAIN'])
-
     data=data.loc[:,"value"]
-
     Bloom_api_options_ticker_data=[]
 
     for i in data:
@@ -153,13 +149,14 @@ def Bloom_strike_api():
    
     return {'Bloom_option_strikes_result': Bloom_option_strikes_result}
 
+
+
 #for the BID, ASK and VOL PRICES
 def Bloom_bid_ask_api():
+    
     con = pdblp.BCon(timeout=2000)
     con.start()
-    
     Strike_data, Ticker_data=[],[]
-    
     Refresh_Data= request.get_json()
 
     for i in Refresh_Data:
@@ -167,7 +164,6 @@ def Bloom_bid_ask_api():
         Ticker_data.append(i['ticker_name'])    
     
     Market_spot=con.ref(Ticker_data[0] + "Equity",flds=['last_price'])
-    
     Market_spot=Market_spot.loc[:,"value"]
 
     data=con.ref(Strike_data[0] ,flds=['BID','ASK','IVOL_MID'])
@@ -177,7 +173,7 @@ def Bloom_bid_ask_api():
     Ticker_data=[]
 
     for i in data:
-        Ticker_data.append(i)
+        Ticker_data.append(float(i))
     
     Output={ 'Strike_price_value': Market_spot[0],'Bid_price': Ticker_data[0],'ASK_Price': Ticker_data[1], 'Vol_value':Ticker_data[2] }
 
@@ -185,13 +181,13 @@ def Bloom_bid_ask_api():
 
 
 
+
 #REFRESH ALL THE BIDS, ASKS AND VOLS IN THE TABLE WITH MARKET SPOT
 def Bloom_refresh_api():
+    
     con = pdblp.BCon(timeout=2000)
     con.start()
-
     Refresh_Data= request.get_json()
-    
     Strike_data, Ticker_data=[],[]
 
     for i in Refresh_Data:
