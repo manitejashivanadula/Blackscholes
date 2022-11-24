@@ -12,6 +12,7 @@ app.add_url_rule('/Blackscholes_bloomberg_apicall',view_func=bloom_api.Bloom_tic
 app.add_url_rule('/Blackscholes_bloomberg_strikecall',view_func=bloom_api.Bloom_strike_api, methods=['GET','POST'])
 app.add_url_rule('/Blackscholes_bloomberg_bid_ask',view_func=bloom_api.Bloom_bid_ask_api, methods=['GET','POST'])
 app.add_url_rule('/Blackscholes_table_refresh',view_func=bloom_api.Bloom_refresh_api, methods=['GET','POST'])
+app.add_url_rule('/Blackscholes_bloomberg_Get_interest_rate',view_func=bloom_api.Bloom_get_interestrate, methods=['GET','POST'])
 
 
 @app.route('/Blackscholes_model')
@@ -183,12 +184,13 @@ def BS_data():
         print('delta', Delta)
         print("option_prices_with_vega", function_return_result)
 
-#Multiplying the multiple with options prices
+#Multiplying the multiple with options prices`
     print("...........Option_price_with_multiple..............")
     np_option_price_value = np.array(function_return_result)
     np_Multiple_values = np.array(Multiple)
     option_price_value_result = np_option_price_value * np_Multiple_values[:, None]
     option_price_value_result=(option_price_value_result.tolist())
+    option_price_value_result= [[round(val, 2) for val in sublst] for sublst in option_price_value_result]
     print("Option_price_with_multiple",option_price_value_result)
     
 #All the Option_price_with_multiple are added to show one final option value
@@ -215,6 +217,13 @@ def BS_data():
     print('Adj_Ask',Adj_Ask)
     print('Adj_Bid_vol',Adj_Bid_vol)
     print('Adj_Ask_vol',Adj_Ask_vol)
+    
+    Sum_Adj_Bid_vol=float("{0:.2f}".format(sum(Adj_Bid_vol)))
+    print('Sum_Adj_Bid_vol',Sum_Adj_Bid_vol)
+    Sum_Adj_Ask_vol=float("{0:.2f}".format(sum(Adj_Ask_vol)))
+    print('Sum_Adj_Ask_vol',Sum_Adj_Ask_vol)
+
+
 #For loop to calculate our_bid price by multiplying adj_bid with miltiple if multiple is positive. else take adj_ask with multiple
     for i in range(len(Adj_Bid)):
         if(Multiple[i]>=1):
@@ -233,7 +242,7 @@ def BS_data():
         print("Our_Adj_Ask",Our_Adj_Ask)
     
     return {'display_options_data':option_price_value_result, 'Adj_Bid':Adj_Bid, 'Adj_Ask':Adj_Ask,'Adj_Bid_vol':Adj_Bid_vol,
-            'Adj_Ask_vol':Adj_Ask_vol, 'Our_Adj_Bid':Our_Adj_Bid,'Our_Adj_Ask': Our_Adj_Ask, 'Final_our_option_price':Final_our_option_price  }
+            'Adj_Ask_vol':Adj_Ask_vol, 'Sum_Adj_Bid_vol':Sum_Adj_Bid_vol, 'Sum_Adj_Ask_vol':Sum_Adj_Ask_vol, 'Our_Adj_Bid':Our_Adj_Bid,'Our_Adj_Ask': Our_Adj_Ask, 'Final_our_option_price':Final_our_option_price  }
 
 def get_option_price(valuation_date, expiry_date, underlying_price, strike_price, volatility, risk_free_rate, dividends, is_american ,is_call ):
     
