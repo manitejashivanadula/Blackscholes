@@ -6,33 +6,42 @@
 <head>
     <style>
         .navbar {
-          margin: auto;
-          color:#99ffe6;
+              margin: auto;
+              color:#99ffe6;
           }
         tbody, td, tfoot, th, thead, tr { 
-           border-color: null;
-         } 
+               border-color: null;
+         }
+         
+        .spinner-border{ 
+            height:20px;
+            width: 20px;
+        }
+         
     </style>
 
 </head>
-<!-- Navbar -->
-<nav class="navbar bg-black">
-      <div class="navbar" >
-          <h3> OPTIONS PRICER <h3>
-      </div>
-</nav>  
 
+
+<!-- Navbar -->
+<div>
+    <nav class="navbar bg-black">
+          <div class="navbar" >
+              <h3> OPTIONS PRICER <h3>
+          </div>
+    </nav>  
+</div>
 
  
-<div class=" container-fluid py-1">
+<div class="container-fluid py-4">
   <!-- Option input table -->
-     <div class=" container-fluid py-4">
+     <div>
           <div class="row">
                 <div class="col-2">
                    <input type="text" class="form-control" id="ticker_data" placeholder="Ticker" required>
                 </div>
                 <div class="col-8">
-                   <button type="button" class="btn btn-outline-dark" onclick="Add_details()"> Search</button>
+                   <button type="button" class="btn btn-outline-dark btn-md" id="Ticker_search_button" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Processing ">Search</button>
                 </div>
                 <div class="col">
                     <input type="text" style="width:100%" style="float: right" class="form-control" id="market_spot_input" placeholder="Market spot" required>
@@ -40,10 +49,10 @@
                 <div class="col">
                     <input type="button" class="btn btn-outline-success" id="add_more_item" style="float: right" value="Add New"> 
                 </div>
-         </div>
+           </div>
     </div>      
-            
-    <div>       
+</div>            
+    <div class="container-fluid py-1">       
         <form method="POST"  id='postForm'>   
               <Table class="table table-striped" id="datatable" > 
                   <thead >
@@ -117,26 +126,27 @@
                                <td> <button type="button" class="btn btn-secondary btn-sm" id="Edit_button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">EDIT</button> </td>
                               
                               <td> <button type="button" onclick="remove_tr(this)" class="btn btn-secondary btn-sm" >Delete</button>  </td>
-                        </tr>  
-                    </tbody>      
-              </table> 
-              <button   type="button" id="bloom_interest_rates" class="btn btn-secondary btn-md" style="float: right">Rates</button>
-              <button   type="button" id="bloom_refresh" class="btn btn-secondary btn-md" style="float: right">Refresh</button>    
-            <button type="submit" id="eu_option_button" class="btn btn-primary btn-md" style="float: right">Calculate</button>  
-         </form> 
-     <div>    
-</div>     
-       
-  <!-- display the Greeks of each option and the diplay the combined options greeks    --> 
-<div class="container">
-   <div class="row">
-            <div class="col-6 text-center">
+                        </tr> 
+                  </tbody>         
+            </table> 
+              <div >
+                  <button   type="button" id="bloom_refresh" class="btn btn-secondary btn-sm" style="margin-left:2240px;">Refresh</button>    
+                  <button   type="submit" id="eu_option_button" class="btn btn-primary btn-md" style="margin-left:2px;">Calculate</button>  
+                  <button   type="button" id="Page_Reload" onClick="window.location.reload();" class="btn btn-secondary btn-sm"  style="margin-left:2px;">Clear</button> 
+             </div>
+      </form> 
+</div>    
 
-                <Table class="ui celled table"  id="price_display_datatable" style="width:100%" > 
-  
-                </Table>
-            </div>
+
+
+<!-- display the Greeks of each option and the diplay the combined options greeks    --> 
+<div class="container-fluid py-1">
+   <div class="row">
             <div class="col-4 text-center">
+                <Table class="table table-striped"   id="price_display_datatable" style="width:100%" >  </Table>
+            </div>
+            
+            <div class="col-6 text-center">
                 <table class="table table-striped">
                       <thead>
                          <tr>    
@@ -144,24 +154,31 @@
                          </tr>
                          <tr>
                              <th class="text-center"> PRICE </th>
+                             <th class="text-center"> BID VOL </th>
                              <th class="text-center"> BID PRICE </th>
                              <th class="text-center"> ASK PRICE</th>
+                             <th class="text-center"> ASK VOL </th>
                          </tr>
                       </thead>
                      <tbody>      
                          <tr class="text-center">
-                         <td><input type="text" id="option_td_value" class="form-control" disabled ></td>
-                         <td><input type="text" id="Our_bid_price" class="form-control" disabled ></td>
-                         <td><input type="text" id="Our_ask_price" class="form-control"  disabled></td>
+                         <td><input type="text" id="option_td_value" class="form-control text-center" disabled ></td>
+                         <td><input  type="text" id="Our_bid_vol" class="form-control text-center"  disabled ></td>                         
+                         <td><input  type="text" id="Our_bid_price" class="form-control text-center"  disabled ></td>
+                         <td><input  type="text" id="Our_ask_price" class="form-control text-center"  disabled></td>
+                         <td><input  type="text" id="Our_ask_vol" class="form-control text-center"  disabled></td>
                          </tr>          
                      </tbody>
                  </table>        
              </div>
-
+             
+            <div class="col-2 text-center">
+                <Table class="display cell-border hover compact stripe"  id="Currency_rates_display_datatable" style="width:100%" > </Table>
+            </div>             
     </div>  
 </div>
 
-<!-- Modal -->
+<!-- HTML CODE FOR DIVIDEND MODEL -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -212,6 +229,8 @@
 </div>
 
 <script type="text/javascript">
+        var Currency_rates =  '';
+        
         var market_spot    =  '';
 
         var div_date_array =  '';
@@ -388,7 +407,9 @@ $('#Spotprice').on('keyup', function() {
  
  
  
-<!--Submitting the data to the python  --> 
+<!--Submitting the data to the python on clicking the calculate button
+
+--> 
 document.getElementById('postForm').addEventListener('submit', getJsonData);
 
  function getJsonData(e){
@@ -448,8 +469,11 @@ document.getElementById('postForm').addEventListener('submit', getJsonData);
           const xhr= new XMLHttpRequest();
           xhr.open('post','/Blackscholes_model_form',true);  
           xhr.setRequestHeader('content-type','application/json');
+          var Spinner=  '<div class="spinner-border" role="status"> <span class="sr-only"></span></div> Loading.... ' 
+          $('#eu_option_button').html(Spinner);    
           
        xhr.onload = function(){
+            $('#eu_option_button').text('Calculate');
             var new_data=JSON.parse(this.responseText);
             var display_array= new_data.display_options_data 
             var Adj_Bid= new_data.Adj_Bid
@@ -458,9 +482,11 @@ document.getElementById('postForm').addEventListener('submit', getJsonData);
             var Adj_Ask_vol= new_data.Adj_Ask_vol
 <!-- On calculate success displaying the our_bid, our_ask, final_options_value -->            
             document.getElementById('market_spot_input').value= market_spot
-            document.getElementById('Our_bid_price').value= new_data.Our_Adj_Bid
-            document.getElementById('Our_ask_price').value= new_data.Our_Adj_Ask
-            document.getElementById('option_td_value').value= new_data.Final_our_option_price
+            document.getElementById('Our_bid_price').value=  parseFloat(new_data.Our_Adj_Bid).toFixed(2)
+            document.getElementById('Our_ask_price').value=  parseFloat(new_data.Our_Adj_Ask).toFixed(2)
+            document.getElementById('option_td_value').value= parseFloat(new_data.Final_our_option_price).toFixed(2)
+            document.getElementById('Our_bid_vol').value= parseFloat(new_data.Sum_Adj_Bid_vol).toFixed(2)
+            document.getElementById('Our_ask_vol').value= parseFloat(new_data.Sum_Adj_Ask_vol).toFixed(2)
             
             $.each($("#table_body #tr_row"),function(){
                         
@@ -480,6 +506,7 @@ document.getElementById('postForm').addEventListener('submit', getJsonData);
 //Datatable for displaying the option prices and greeks
          $(document).ready(function () {
                 $('#price_display_datatable').DataTable({
+                       info: false,
                        paging: false,
                        searching: false,
                        destroy: true,
@@ -500,66 +527,154 @@ document.getElementById('postForm').addEventListener('submit', getJsonData);
       
                          
 <!--ON SEARCH BUTTON CLICK MAKE AN AJAX CALL FOR SENDING THE DIVIDEND AND SPOT PRICES AND LOAD HARDCODED MATURITY DATE ARRAY ALSO -->
- function Add_details(){
+$('#Ticker_search_button').click( function() {
      
         let ticker_name=   document.getElementById("ticker_data").value;
         
         if(ticker_name==''){
-           alert("Enter the valid Ticker")
+           alert("Enter the Ticker")
         }
         else{
-        
-            Maturity_array= ['11/18/22', '12/16/22', '01/20/23', '02/17/23', '03/17/23', '04/21/23', '05/19/23', '06/16/23', '07/21/23', '08/18/23', '09/15/23', '10/20/23', '11/17/23', '12/15/23', '01/19/24', '02/16/24', '03/15/24', '04/19/24', '05/17/24', '06/21/24', '07/19/24', '08/16/24', '09/20/24', '10/18/24', '11/15/24', '12/20/24', '01/17/25', '02/21/25', '03/21/25', '04/18/25', '05/16/25', '06/20/25', '07/18/25', '08/15/25', '09/19/25', '10/17/25', '11/21/25', '12/19/25']
-            
-           $("#Maturity").html('');
-            
-          for(var i = 0; i < Maturity_array.length; i++) {
-               var opt = Maturity_array[i];
-               var el = document.createElement("option");
-                el.textContent = opt;
-               el.value = opt;
-               maturity.appendChild(el);
-           }      
 
-                 const xhr= new XMLHttpRequest();
-                 xhr.open('post','/Blackscholes_bloomberg_apicall',true);  
-                 xhr.setRequestHeader('content-type','application/json');
-                   
-             xhr.onload = function(){
-                 
-                   if(xhr.status === 200) { 
-                      var new_data=JSON.parse(this.responseText);
-                      
-                      console.log(new_data.Spot_Price)
+            Maturity_array= ['Select Maturity','12/16/22', '01/20/23', '02/17/23', '03/17/23', '04/21/23', '05/19/23', '06/16/23', '07/21/23', '08/18/23', '09/15/23', '10/20/23', '11/17/23', '12/15/23', '01/19/24', '02/16/24', '03/15/24', '04/19/24', '05/17/24', '06/21/24', '07/19/24', '08/16/24', '09/20/24', '10/18/24', '11/15/24', '12/20/24', '01/17/25', '02/21/25', '03/21/25', '04/18/25', '05/16/25', '06/20/25', '07/18/25', '08/15/25', '09/19/25', '10/17/25', '11/21/25', '12/19/25']
+            
+           $("#Maturity").html('');     
 
-                      div_date_array =  new_data.Dividend_date;
-                      divdata_array =  new_data.Dividend_rate;
-                      Reset_array =  new_data.Dividend_rate;
-                      document.getElementById('market_spot_input').value= new_data.Spot_price
-                      $("#Dividend_date").html('');  
+            const xhr= new XMLHttpRequest();
+            xhr.open('post','/Blackscholes_bloomberg_apicall',true);  
+            xhr.setRequestHeader('content-type','application/json');
+            var Spinner=  '<div class="spinner-border" role="status"> <span class="sr-only"></span></div> Loading.... ' 
+            $('#Ticker_search_button').html(Spinner);    
+             
+            xhr.onload = function(){
+             
+                try{
+                     var new_data=JSON.parse(this.responseText);
+                          $('#Ticker_search_button').text('Search');
+                          $("#Dividend_date").html(''); 
+                          
+//appending the dividend and divdate to thier respective arrays                        
+                          div_date_array =  new_data.Dividend_date;
+                          divdata_array =  new_data.Dividend_rate;
+                          Reset_array =  new_data.Dividend_rate;
+                          document.getElementById('market_spot_input').value= new_data.Spot_price
+                          Currency_rates = new_data.Final_display_array;
+                          
+//Emptying the alloption data textfields on successful search of the ticker 
+                         document.getElementById('Our_bid_price').value= ''
+                         document.getElementById('Our_ask_price').value= ''
+                         document.getElementById('option_td_value').value= '' 
+                         document.getElementById('Our_bid_vol').value= ''
+                         document.getElementById('Our_ask_vol').value=  ''                                           
+                          
+//Datatable for displaying the currency rates
+                          $(document).ready(function () {
+                                 $('#Currency_rates_display_datatable').DataTable({
+                                        info: false,
+                                        paging: false,
+                                        searching: false,
+                                        destroy: true,
+                                        ordering: false,
+                                        data: Currency_rates,
+                                        columns: [
+                                            { title: 'TENOR' },
+                                            { title: 'NO OF DAYS' },
+                                            { title: 'INTEREST RATE' },  
+                                        ], 
+                                });
+                           }); 
+    
+//Append the maturities to the dropdown                      
+                       for(var i = 0; i < Maturity_array.length; i++) {
+                            var opt = Maturity_array[i];
+                            var el = document.createElement("option");
+                             el.textContent = opt;
+                            el.value = opt;
+                            maturity.appendChild(el);
+                        }  
                      
-     //for appending the value to the html element   
-                     $.each($("#table_body #tr_row"),function(){
-                     
-                         $(this).find("#Ticker_value").val(new_data.Ticker)
-                         
-     //THIS IS FOR WHEN YOU ENTER NEW TICKER THE FIELDS OF STRIKE AND LIST OF STRIKES WILL BECOME EMPTY                    
-                         $(this).find("#List_of_Strikes").val('')
-                         $(this).find("#Strikeprice").val('')
-                         $(this).find("#Ask_price").val('')
-                         $(this).find("#Bid_price").val('') 
-                         $(this).find("#Volatility").val('')  
-                         $(this).find("#Bid_vol").val('')
-                         $(this).find("#Ask_vol").val('')    
-                         $(this).find("#Spotprice").val('')       
-                       });
-                   }
-              }     
-           xhr.send(JSON.stringify(ticker_name));         
-        
-        }
-        
- } 
+//for appending the value to the html element and THIS IS FOR WHEN YOU ENTER NEW TICKER THE FIELDS OF STRIKE AND LIST OF STRIKES WILL BECOME EMPTY 
+                         $.each($("#table_body #tr_row"),function(){
+                             $(this).find("#Ticker_value").val(new_data.Ticker)                 
+                             $(this).find("#List_of_Strikes").val('')
+                             $(this).find("#Strikeprice").val('')
+                             $(this).find("#Ask_price").val('')
+                             $(this).find("#Bid_price").val('') 
+                             $(this).find("#Volatility").val('')  
+                             $(this).find("#Bid_vol").val('')
+                             $(this).find("#Ask_vol").val('')    
+                             $(this).find("#Spotprice").val('') 
+                             $(this).find("#Interest_Rate_value").val('')       
+                           });                                          
+                }catch(e){
+                
+//Append the maturities to the dropdown                      
+                     for(var i = 0; i < Maturity_array.length; i++) {
+                           var opt = Maturity_array[i];
+                           var el = document.createElement("option");
+                            el.textContent = opt;
+                           el.value = opt;
+                           maturity.appendChild(el);
+                     }  
+               
+                    $.each($("#table_body #tr_row"),function(){
+                        $(this).find("#Ticker_value").val('')
+                    });
+                    
+                    $('#Ticker_search_button').text('Search');
+                    document.getElementById('ticker_data').value=''
+                    alert("Please Enter a Valid Ticker")
+                } 
+          }     
+        xhr.send(JSON.stringify(ticker_name));  
+               
+      }       
+ }); 
+ 
+ 
+<!----- Getting the interest rate using the maturity ---------->
+$(document).on('change','#Maturity', function() {
+
+            var index= $(this).closest('tr').get(0).rowIndex;
+            
+            let IR_Maturity_date = ''
+            
+            $.each($("#table_body #tr_row"),function(){
+                 var strike_box = $(this).closest('tr').index()+1; 
+                              
+                 if(strike_box==index){         
+                       IR_Maturity_date =   $(this).find("#Maturity").val()
+                    }
+             });
+              
+              var Maturity_items_array=[]
+              let Maturity_items= {
+                             Maturity_data :   IR_Maturity_date,
+                             Interest_Rate :    Currency_rates,
+                              }
+                        Maturity_items_array.push(Maturity_items)              
+
+              const xhr= new XMLHttpRequest();
+              xhr.open('post','/Blackscholes_bloomberg_Get_interest_rate',true);  
+              xhr.setRequestHeader('content-type','application/json');
+              xhr.onload = function(){
+                    
+                    var new_data=JSON.parse(this.responseText);
+                    var Interest_Rate_value= new_data.New_Interest_value;
+                       
+                    $.each($("#table_body #tr_row"),function(){
+    
+                          var strike_box = $(this).closest('tr').index()+1; 
+                                     
+                           if(strike_box==index){
+                                $(this).find("#Interestrate").val(parseFloat(Interest_Rate_value).toFixed(4))
+                           }                        
+                  });       
+             }
+         xhr.send(JSON.stringify(Maturity_items_array));                       
+}); 
+     
+     
      
  
 <!-- AJAX CALL FOR SENDING THE STRIKE, TICKER AND RECEIVING THE LIST_OF_STRIKES  -->
@@ -571,7 +686,6 @@ $(document).on('click','#Strikeprice_button', function() {
         alert("Enter the strike")
    }
    else{
-     
             var index= $(this).closest('tr').get(0).rowIndex;
          
             let Py_ticker_name, Py_Maturity_date, Py_type, Py_strike = 0
@@ -601,19 +715,27 @@ $(document).on('click','#Strikeprice_button', function() {
               var Strike_array=[]
               
               let Strike_item= {
-                             Strike_value :   strike_value,
-                             Ticker_name  :   Py_ticker_name,
+                             Strike_value  :   strike_value,
+                             Ticker_name   :   Py_ticker_name,
+                             Maturity_data :   Py_Maturity_date,
                               }
-                        Strike_array.push(Strike_item)                  
+                        Strike_array.push(Strike_item)              
                  
 //OPTION STRIKES API CONNECTION 
        
               const xhr= new XMLHttpRequest();
               xhr.open('post','/Blackscholes_bloomberg_strikecall',true);  
               xhr.setRequestHeader('content-type','application/json');
-            
+              $.each($("#table_body #tr_row"),function(){
+                  var strike_box = $(this).closest('tr').index()+1;                
+                  if(strike_box==index){     
+                       var Spinner=  '<div class="spinner-border" role="status"> <span class="sr-only"></span></div> ' 
+                       $(this).find("#Strikeprice_button").html(Spinner);                                                                        
+                 }                        
+            });
+         
               xhr.onload = function(){
-                    
+                     
                     var new_data=JSON.parse(this.responseText);
                         
                     var Bloom_api_strikes= new_data.Bloom_option_strikes_result;
@@ -623,11 +745,11 @@ $(document).on('click','#Strikeprice_button', function() {
                           var strike_box = $(this).closest('tr').index()+1; 
                                      
                            if(strike_box==index){
-                                 
+                               $(this).find("#Strikeprice_button").html('<i class="fas fa-search" style="font-size:22px;" aria-hidden="true"></i>');  
                                 $List_of_Strikes_datafield =  $(this).find("#List_of_Strikes")
                                   
                                 $List_of_Strikes_datafield.html('');
-                                        
+                                   
                                 for (var i = 0; i < Bloom_api_strikes.length; i++) {
                                       var $data = $("<option>", {
                                       value: Bloom_api_strikes[i],
@@ -693,8 +815,7 @@ $(document).on("change","#List_of_Strikes",function bid_ask_adding(e){
                              });  
                    } 
                    else {
-
-                          alert(" data is not present for this current strike");
+                          alert("complete data is not present for this current strike");
                             
                           $.each($("#table_body #tr_row"),function(){
                                 
@@ -721,10 +842,8 @@ $(document).on("change","#List_of_Strikes",function bid_ask_adding(e){
                        });    
 
                    alert("complete data is not present for this current strike");
-     
            }  
                
- 
         };
      xhr.send(JSON.stringify(arrayItem));         
 });
@@ -758,17 +877,21 @@ $(document).on('click','#bloom_refresh', function() {
          const xhr= new XMLHttpRequest();
          xhr.open('post','/Blackscholes_table_refresh',true);  
          xhr.setRequestHeader('content-type','application/json');
+         var Spinner=  '<div class="spinner-border" role="status"> <span class="sr-only"></span></div> Loading' 
+         $('#bloom_refresh').html(Spinner);         
               
          xhr.onload = function(){
-             var new_data=JSON.parse(this.responseText);
-                      
-             var market_option_data= new_data.Option_market_values
-                      
+            
+             $('#bloom_refresh').text('Refresh');
+             var new_data=JSON.parse(this.responseText);        
+             var market_option_data= new_data.Option_market_values     
              market_spot= new_data.Strike_price_value
              document.getElementById('market_spot_input').value=market_spot
              document.getElementById('Our_bid_price').value= ''
              document.getElementById('Our_ask_price').value= ''
-             document.getElementById('option_td_value').value= ''         
+             document.getElementById('option_td_value').value= '' 
+             document.getElementById('Our_bid_vol').value= ''
+             document.getElementById('Our_ask_vol').value=  ''                  
                       
 //console.log(market_option_data)
 console.log(market_spot)
@@ -796,11 +919,7 @@ console.log(market_spot)
 });
  
 
- 
 
- 
- 
- 
  
 </script>
 
