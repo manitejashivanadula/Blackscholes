@@ -4,10 +4,9 @@ import datetime
 from datetime import date
 import blpapi
 import pdblp
-import json
+from xbbg import blp
 
 #Function to get the dividend dates and dividends based on the tikcer searched
-
 def Bloom_ticker_api():
     Ticker_data = request.get_json()
     
@@ -77,7 +76,65 @@ def Bloom_ticker_api():
                 continue
     finally:
         session.stop()
-    Output={'Ticker':Ticker_data, 'Spot_price':Spot_Price,'Dividend_date':Dividend_date, 'Dividend_rate':Dividend_rate }
+        
+#------------------CURRENCY RATE IN MIDDLE OF FINDING THE SPOT AND DIV WITH DIVDATE----------------------------------------------       
+#To get the multiple Currency rates using the Ticker    
+    Ticker_value = blp.bdp(Ticker_data + "Equity",flds=['CRNCY'])
+    Ticker_value=Ticker_value.loc[:,"crncy"]
+
+    Search_Bloom_ticker=''
+    for i in Ticker_value:
+        Search_Bloom_ticker=i
+    
+    print(Search_Bloom_ticker)
+
+    EURO_Curncy= ['EESWE1Z BGN Curncy', 'EESWE2Z BGN Curncy', 'EESWEA BGN Curncy', 'EESWEB BGN Curncy', 'EESWEC BGN Curncy', 'EESWEF BGN Curncy',  'EESWEI BGN Curncy', 'EESWE1 BGN Curncy', 'EESWE1F BGN Curncy', 'EESWE2 BGN Curncy', 'EESWE3 BGN Curncy'] 
+    EURO_tenor =['1 WK', '2 WK', '1 MO', '2 MO', '3 MO', '6 MO', '9 MO', '12 MO', '18 MO', '2 YR', '3 YR']
+    Euro_days= [7, 14, 30, 60, 90, 180, 270, 360, 540, 720, 1080]
+
+
+    GBP_Curncy = ['BPSWS1Z BGN Curncy', 'BPSWS2Z BGN Curncy', 'BPSWSA BGN Curncy', 'BPSWSB BGN Curncy', 'BPSWSC BGN Curncy', 'BPSWSD BGN Curncy', 'BPSWSE BGN Curncy', 'BPSWSG BGN Curncy', 'BPSWSH BGN Curncy', 'BPSWSI BGN Curncy',  'BPSWSJ BGN Curncy', 'BPSWSK BGN Curncy', 'BPSWS1 BGN Curncy', 'BPSWS1F BGN Curncy', 'BPSWS2 BGN Curncy','BPSWS3 BGN Curncy', 'BPSWS4 BGN Curncy']
+    GBP_Tenor = ['1 WK', '2 WK', '1 MO', '2 MO', '3 MO', '4 MO', '5 MO', '6 MO', '7 MO', '8 MO', '9 MO', '10 MO', '11 MO', '12 MO', '18 MO', '2 YR', '3 YR']
+    GBP_days= [7, 14, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360, 540, 720, 1080]
+
+    CHF_Curncy = ['SFSNT1Z BGN Curncy', 'SFSNT2Z BGN Curncy', 'SFSNTA BGN Curncy', 'SFSNTB BGN Curncy', 'SFSNTC BGN Curncy','SFSNTD BGN Curncy', 'SFSNTE BGN Curncy', 'SFSNTF BGN Curncy', 'SFSNTG BGN Curncy', 'SFSNTH BGN Curncy','SFSNTI BGN Curncy', 'SFSNTJ BGN Curncy', 'SFSNTK BGN Curncy', 'SFSNT1 BGN Curncy', 'SFSNT1C BGN Curncy','SFSNT1F BGN Curncy', 'SFSNT1I BGN Curncy', 'SFSNT2 BGN Curncy', 'SFSNT3 BGN Curncy']       
+    CHF_Tenor = ['1 WK', '2 W', '1 MO', '2 MO', '3 MO', '4 MO', '5 MO', '6 MO', '7 MO', '8 MO', '9 MO', '10 MO', '11 MO', '12 MO', '15 MO', '18 MO', '21 MO', '2 YR', '3 YR']
+    CHF_days= [7, 14, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360, 450, 540, 630, 720, 1080]
+
+    Input_value= Search_Bloom_ticker
+    if(Input_value== 'EUR'):
+        Input_value=EURO_Curncy
+        Input_tenor=EURO_tenor
+        Input_days= Euro_days
+    elif(Input_value== 'GBp'):
+        Input_value=GBP_Curncy
+        Input_tenor=GBP_Tenor
+        Input_days= GBP_days
+    elif(Input_value== 'CHF'):
+        Input_value=CHF_Curncy
+        Input_tenor=CHF_Tenor
+        Input_days= CHF_days
+    else:
+        print('No Match Found')
+    
+#print(Input_value)
+    bloom_data_array, Final_display_array=[],[]
+    con = pdblp.BCon(timeout=20000)
+    con.start()
+    for i in range(len(Input_value)):
+        bloom_data=con.ref(Input_value[i] ,flds=["PX_LAST"])
+        bloom_data_array.append(bloom_data['value'])
+    
+    for i in  range(len(bloom_data_array)):
+        False_display=[]
+        False_display.append(Input_tenor[i])
+        False_display.append(Input_days[i])
+        False_display.append(bloom_data_array[i][0])
+        Final_display_array.insert(i,False_display)
+
+    print('Final_curreny_rates_array :',Final_display_array)
+    
+    Output={'Final_display_array':Final_display_array, 'Ticker':Ticker_data, 'Spot_price':Spot_Price,'Dividend_date':Dividend_date, 'Dividend_rate':Dividend_rate }
     return  Output
 
 def dvd_hist_all_response_handler(event):
@@ -122,7 +179,8 @@ def dvd_hist_all_response_handler(event):
 
 
 
-#Function to get the options stikes from bloomberg after matching with substring
+
+#Function to get the LIST_OF_STRIKES from bloomberg after matching with substring
 def Bloom_strike_api():
     
     strike_api_data = request.get_json()
@@ -145,16 +203,43 @@ def Bloom_strike_api():
     sub_string=Strike_data[0]
 
     Bloom_option_strikes_result= [s for s in Bloom_api_options_ticker_data if sub_string in s]
+    #In the list the 0 position will be for showing the select the strike option under dropdown
     Bloom_option_strikes_result.insert(0,'Select Strike')
    
-    return {'Bloom_option_strikes_result': Bloom_option_strikes_result}
+    return {'Bloom_option_strikes_result': Bloom_option_strikes_result }
 
+
+
+
+#For match the closest interest rate possible by matching with nearest dates
+def closest(Interest_data, res): 
+    return Interest_data[min(range(len(Interest_data)), key = lambda i: abs(Interest_data[i][1]-res))]
+
+
+#TO GET THE CLOSEST INTEREST RATE DEPENDING UPON THE MATURITY 
+def Bloom_get_interestrate():
+    Maturity_items = request.get_json()
+    Mat_date, Interest_data=[],[]
+    
+    for i in Maturity_items:
+        Mat_date.append(i['Maturity_data'])
+        Interest_data=(i['Interest_Rate'])
+        
+    dt = str(date.today())
+
+    res = abs(datetime.datetime.strptime(dt, "%Y-%m-%d") - datetime.datetime.strptime(Mat_date[0], "%m/%d/%y")).days
+    #print(res)
+
+    Interest_value=closest(Interest_data, res)
+    New_Interest_value=Interest_value[2]/100
+    
+    return {'New_Interest_value':New_Interest_value }    
 
 
 #for the BID, ASK and VOL PRICES
 def Bloom_bid_ask_api():
     
-    con = pdblp.BCon(timeout=2000)
+    con = pdblp.BCon(timeout=20000)
     con.start()
     Strike_data, Ticker_data=[],[]
     Refresh_Data= request.get_json()
