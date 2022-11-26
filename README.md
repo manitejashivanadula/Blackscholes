@@ -1,4 +1,4 @@
-#OPTIONS PRICING TOOL 
+#OPTIONS PRICING TOOL  
 
 Options pricer with Discrete Dividend using QuantLib, Python, Javascript, Bootstrap and Bloomberg API's
 
