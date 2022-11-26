@@ -1,3 +1,4 @@
+![PRICER](https://user-images.githubusercontent.com/117934424/204078148-24f524a8-4be5-4aa3-a4a0-f490b0eaf2ee.jpg)
 #OPTIONS PRICING TOOL  
 
 Options pricer with Discrete Dividend using QuantLib, Python, Javascript, Bootstrap and Bloomberg API's
