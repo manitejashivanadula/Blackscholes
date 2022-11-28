@@ -2,7 +2,7 @@
 
 #OPTIONS PRICING TOOL  
 
-Options pricer with Discrete Dividend using QuantLib, Python, Javascript, Bootstrap and Bloomberg API's
+Options pricer with Discrete Dividend using QuantLib, Python, Javascript, Bootstrap and Bloomberg API's ( RUN THIS TOOL USING SPYDER IN ANACONDA )
 
 I have made this tool by keeping my mind to make the options pricing easier. This is a dynamic tool where you can calculate the multiple options in a single click.
 
