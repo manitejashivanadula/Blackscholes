@@ -22,3 +22,12 @@ I have made this tool by keeping my mind to make the options pricing easier. Thi
 
 and other screen is an InterdealerBroker Screen to input thier BID & ASK values and compare with Adjusted BID-VOL & ASK-VOL.
 
+Python Libraries to run this tool...
+
+1) pip install QuantLib-Python
+
+2) pip install pdblp
+
+3) pip install xbbg
+
+4) pip install --index-url=https://bcms.bloomberg.com/pip/simple blpapi
