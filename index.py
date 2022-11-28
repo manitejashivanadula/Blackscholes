@@ -6,6 +6,7 @@ from datetime import datetime
 from datetime import date
 from dateutil.parser import parse
 import bloom_api
+from numpy import array
 
 app= Flask(__name__)
 app.add_url_rule('/Blackscholes_bloomberg_apicall',view_func=bloom_api.Bloom_ticker_api, methods=['GET','POST'])
@@ -135,6 +136,7 @@ def BS_data():
     Adj_Bid, Adj_Ask, Adj_Bid_vol, Adj_Ask_vol=[],[],[],[]
     Our_Adj_Bid,Our_Adj_Ask=0,0
     Final_our_option_price=0
+    Sum_of_vega=0
     
     for i in combine_pricer_list_result:
         for j in i:
@@ -175,14 +177,14 @@ def BS_data():
         Vega.append(float("{0:.3f}".format(vega)))
         function_return_result[i].append(Vega[i])
         
-        print("Multiple",Multiple)
-        print("Prices", Prices)
-        #print("Prices_1", Prices_1)
-        print("Vol_array", Vol_array)
-        #print("Vol_array_1", Vol_array_1)
-        print("Vega", Vega)
-        print('delta', Delta)
-        print("option_prices_with_vega", function_return_result)
+    print("Multiple",Multiple)
+    print("Prices", Prices)
+    #print("Prices_1", Prices_1)
+    print("Vol_array", Vol_array)
+    #print("Vol_array_1", Vol_array_1)
+    print("Vega", Vega)
+    print('delta', Delta)
+    print("option_prices_with_vega", function_return_result)
 
 #Multiplying the multiple with options prices`
     print("...........Option_price_with_multiple..............")
@@ -190,13 +192,28 @@ def BS_data():
     np_Multiple_values = np.array(Multiple)
     option_price_value_result = np_option_price_value * np_Multiple_values[:, None]
     option_price_value_result=(option_price_value_result.tolist())
-    option_price_value_result= [[round(val, 2) for val in sublst] for sublst in option_price_value_result]
     print("Option_price_with_multiple",option_price_value_result)
     
 #All the Option_price_with_multiple are added to show one final option value
     for i in option_price_value_result:
         Final_our_option_price=float("{0:.3f}".format(Final_our_option_price+i[0]))
+        Sum_of_vega=float("{0:.3f}".format(Sum_of_vega+i[3]))
     print("Final_our_option_price",Final_our_option_price)
+    print('Sum_of_vega',Sum_of_vega)
+    
+    #Column sum of Greeks
+    def column_sum(option_price_value_result):
+        arr = array(option_price_value_result)
+        return sum(arr, 0).tolist()
+
+#Making column sum of Greeks and appending them in the last row of option_price_value_result and Round the entire list float values to only 2 decimal points
+    option_price_value_result.append(column_sum(option_price_value_result))
+    option_price_value_result= [[round(val, 2) for val in sublst] for sublst in option_price_value_result]
+    print(option_price_value_result)
+    
+#sum of vol_array and vega for calculating the IDB prices
+    Sum_vol_array=float("{0:.3f}".format(sum(Vol_array)))
+    print('Sum_vol_array',Sum_vol_array)
     
     print("...........Market_values..............")
     print('Bid_price',Market_Bid_price)
@@ -208,10 +225,10 @@ def BS_data():
 #formula =>Vega = (Current_option_price-Market_bid_price)/(Current_option_vol-finding_vol)
     print("...........Adjusted_values..............")
     for i in range(len(Market_Bid_price)):
-        Adj_Bid.append(float("{0:.2f}".format(Market_Bid_price[i] - Delta[i]*(Market_spot[0]-Spotprice[0]))))
-        Adj_Ask.append(float("{0:.2f}".format(Market_Ask_price[i] - Delta[i]*(Market_spot[0]-Spotprice[0]))))
-        Adj_Bid_vol.append(float("{0:.2f}".format((Vol_array[i] - ((Prices[i] - Adj_Bid[i])/Vega[i])  )*100)))
-        Adj_Ask_vol.append(float("{0:.2f}".format((Vol_array[i] - ((Prices[i] - Adj_Ask[i])/Vega[i])  )*100))) 
+        Adj_Bid.append(float("{0:.3f}".format(Market_Bid_price[i] - Delta[i]*(Market_spot[0]-Spotprice[0]))))
+        Adj_Ask.append(float("{0:.3f}".format(Market_Ask_price[i] - Delta[i]*(Market_spot[0]-Spotprice[0]))))
+        Adj_Bid_vol.append(float("{0:.3f}".format((Vol_array[i] - ((Prices[i] - Adj_Bid[i])/Vega[i])  )*100)))
+        Adj_Ask_vol.append(float("{0:.3f}".format((Vol_array[i] - ((Prices[i] - Adj_Ask[i])/Vega[i])  )*100))) 
 
     print('Adj_Bid',Adj_Bid)
     print('Adj_Ask',Adj_Ask)
@@ -242,7 +259,7 @@ def BS_data():
         print("Our_Adj_Ask",Our_Adj_Ask)
     
     return {'display_options_data':option_price_value_result, 'Adj_Bid':Adj_Bid, 'Adj_Ask':Adj_Ask,'Adj_Bid_vol':Adj_Bid_vol,
-            'Adj_Ask_vol':Adj_Ask_vol, 'Sum_Adj_Bid_vol':Sum_Adj_Bid_vol, 'Sum_Adj_Ask_vol':Sum_Adj_Ask_vol, 'Our_Adj_Bid':Our_Adj_Bid,'Our_Adj_Ask': Our_Adj_Ask, 'Final_our_option_price':Final_our_option_price  }
+            'Adj_Ask_vol':Adj_Ask_vol,'Sum_vol_array':Sum_vol_array, 'Sum_of_vega':Sum_of_vega, 'Sum_Adj_Bid_vol':Sum_Adj_Bid_vol, 'Sum_Adj_Ask_vol':Sum_Adj_Ask_vol, 'Our_Adj_Bid':Our_Adj_Bid,'Our_Adj_Ask': Our_Adj_Ask, 'Final_our_option_price':Final_our_option_price  }
 
 def get_option_price(valuation_date, expiry_date, underlying_price, strike_price, volatility, risk_free_rate, dividends, is_american ,is_call ):
     
