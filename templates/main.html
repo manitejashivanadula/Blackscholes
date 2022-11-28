@@ -17,6 +17,10 @@
             height:20px;
             width: 20px;
         }
+        
+        table tr:last-child {
+          font-weight: bold;  
+        }
          
     </style>
 
@@ -51,16 +55,17 @@
                 </div>
            </div>
     </div>      
-</div>            
-    <div class="container-fluid py-1">       
-        <form method="POST"  id='postForm'>   
-              <Table class="table table-striped" id="datatable" > 
-                  <thead >
-                       <tr >
+</div> 
+           
+<div class="container-fluid py-1">       
+    <form method="POST"  id='postForm'>   
+          <Table class="table table-striped" id="datatable" > 
+                  <thead>
+                       <tr>
                            <TH style="Text-align: center;">MULTIPLE </Th>
                            <TH style="Text-align: center;"> TICKER </Th>
-                           <th style="Text-align: center;">OPTION ZONE</th>
-                           <th style="Text-align: center;">OPTION TYPE</th>
+                           <th style="Text-align: center;">ZONE</th>
+                           <th style="Text-align: center;">OPTION</th>
                            <th style="Text-align: center;">EXPIRY</th>
                            <th style="Text-align: center;">SPOT </th>
                            <th style="Text-align: center;">STRIKE </th>
@@ -71,26 +76,26 @@
                            <th style="Text-align: center;">BID</th>
                            <th style="Text-align: center;">ASK</th>
                            <th style="Text-align: center;">ASK VOL</th>
-                           <th style="Text-align: center;">EDIT </th>
+                           <th style="Text-align: center;">DIVIDEND </th>
                            <th style="Text-align: center;">DELETE</th>
                       </tr>
                    </thead>
                    <tbody id="table_body">
                        <tr id="tr_row">
-                               <td> <input type="Number" id="Multiple" class="form-control" required>      </td>
+                               <td> <input type="Number" id="Multiple" class="form-control" value=1 required>      </td>
                                
                                <td> <input type="Text" class="form-control" id="Ticker_value"  placeholder="Ticker" required>      </td>
                                
                                <td> <select name="options_zone" id="Option_data_zone" class=" select2 btn dropdown-toggle" required>
-                                          <option value="" selected="selected">Select option</option>
+                                          <option value="" selected="selected">Select </option>
                                           <option value="1">American </option>
                                           <option value="0">European</option>
                                       </select></td>  
                               
                               <td> <select name="options_type" id="Option_type_data" class="btn dropdown-toggle" required>
-                                           <option value="" selected="selected">Select option</option>
-                                           <option value="1">Call Option</option>
-                                           <option value="0"> Put Option</option>
+                                           <option value="" selected="selected">Select </option>
+                                           <option value="1">Call </option>
+                                           <option value="0"> Put </option>
                                        </select></td> 
                               
                               <td> <select id="Maturity" placeholder="Maturity" class="btn dropdown-toggle" required >
@@ -123,13 +128,13 @@
                               
                               <td> <input type="text" class="form-control" id="Ask_vol" placeholder="Ask vol" ></td>
 
-                               <td> <button type="button" class="btn btn-secondary btn-sm" id="Edit_button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">EDIT</button> </td>
+                               <td> <button type="button" class="btn btn-secondary btn-sm" id="Edit_button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Dividend</button> </td>
                               
                               <td> <button type="button" onclick="remove_tr(this)" class="btn btn-secondary btn-sm" >Delete</button>  </td>
                         </tr> 
                   </tbody>         
-            </table> 
-              <div >
+           </table> 
+              <div>
                   <button   type="button" id="bloom_refresh" class="btn btn-secondary btn-sm" style="margin-left:2240px;">Refresh</button>    
                   <button   type="submit" id="eu_option_button" class="btn btn-primary btn-md" style="margin-left:2px;">Calculate</button>  
                   <button   type="button" id="Page_Reload" onClick="window.location.reload();" class="btn btn-secondary btn-sm"  style="margin-left:2px;">Clear</button> 
@@ -139,7 +144,7 @@
 
 
 
-<!-- display the Greeks of each option and the diplay the combined options greeks    --> 
+<!-- display the Greeks of each option and the diplay the combined options greeks  and ELECTRONIC MARKET PRICES  --> 
 <div class="container-fluid py-1">
    <div class="row">
             <div class="col-4 text-center">
@@ -150,7 +155,7 @@
                 <table class="table table-striped">
                       <thead>
                          <tr>    
-                            <th colspan="6" class="text-center"><B>ALL OPTIONS DATA</B></th>
+                            <th colspan="6" class="text-center"><B>ELECTRONIC MARKET PRICES</B></th>
                          </tr>
                          <tr>
                              <th class="text-center"> PRICE </th>
@@ -169,7 +174,32 @@
                          <td><input  type="text" id="Our_ask_vol" class="form-control text-center"  disabled></td>
                          </tr>          
                      </tbody>
-                 </table>        
+                 </table>
+                 
+<!-- display the INTERDEALDER BROKER MARKET PRICES  -->
+                    <div class="py-2"> 
+                     <table class="table table-striped">
+                           <thead>
+                              <tr>    
+                                 <th colspan="6" class="text-center"><B>INTERDEALDER BROKER MARKET PRICES</B></th>
+                              </tr>
+                              <tr>
+                                  <th class="text-center"> BID VOL </th>
+                                  <th class="text-center"> BID PRICE </th>
+                                  <th class="text-center"> ASK PRICE</th>
+                                  <th class="text-center"> ASK VOL </th>
+                              </tr>
+                           </thead>
+                          <tbody>      
+                              <tr class="text-center">
+                              <td><input  type="text" id="IBD_bid_vol" class="form-control text-center"  disabled ></td>                         
+                              <td><input  type="text" id="IBD_bid_price" class="form-control text-center"  ></td>
+                              <td><input  type="text" id="IBD_ask_price" class="form-control text-center" ></td>
+                              <td><input  type="text" id="IBD_ask_vol" class="form-control text-center"  disabled></td>
+                              </tr>          
+                          </tbody>
+                      </table>        
+                   </div>   
              </div>
              
             <div class="col-2 text-center">
@@ -177,6 +207,8 @@
             </div>             
     </div>  
 </div>
+
+
 
 <!-- HTML CODE FOR DIVIDEND MODEL -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -197,10 +229,8 @@
                    <tH>
                        <div class="input-group">
                         <input type="text" id="Percentage_Div" class="form-control"  >
-                        <div class="input-group-append">
-                          <button type="button" id="Percent_search" class="btn btn-secondary btn-md"> 
-                          <i class="fas fa-search" style="font-size:22px;" ></i> </button>
-                        </div>
+                        <div class="input-group-append"></div>
+                          <button type="button" id="Percent_search" class="btn btn-secondary btn-md"> Cal</button>
                       </div>
                    </tH>
               </tr>
@@ -220,9 +250,9 @@
         
       </div>
       <div class="modal-footer">
-        <button type="button" id="Close_button" class="btn btn-secondary  btn-md" data-bs-dismiss="modal">Close</button>
+        <button type="button" id="Close_button" class="btn btn-secondary  btn-sm" data-bs-dismiss="modal">Close</button>
         <button type="button" id="Update_button" class="btn btn-primary  btn-md">Update</button>
-         <button type="button" id="Reset_button" class="btn btn-primary  btn-md">Reset</button>
+         <button type="button" id="Reset_button" class="btn btn-secondary  btn-sm">Reset</button>
       </div>
     </div>
   </div>
@@ -231,7 +261,9 @@
 <script type="text/javascript">
         var Currency_rates =  '';
         
-        var market_spot    =  '';
+        var Vol_array      =  '';
+        
+        var Sum_of_Vega    =  '';
 
         var div_date_array =  '';
 
@@ -287,7 +319,7 @@ $('#add_more_item').click(function(e) {
  }
     
   
-<!-- //Code for on click of edit button you only create the required no of textfields depending upon the rows of data and append the data  -->    
+<!-- Code for on click of edit button you only create the required no of textfields depending upon the rows of data and append the data  -->    
  var row_count=[];   
  
 $('#Edit_button').click(function(e) { 
@@ -443,6 +475,7 @@ document.getElementById('postForm').addEventListener('submit', getJsonData);
                 let D_interest_rate=        parseFloat($(this).find("#Interestrate").val())
                 let D_bid_price=            parseFloat($(this).find("#Bid_price").val())
                 let D_ask_price=            parseFloat($(this).find("#Ask_price").val())
+                let market_spot=            parseFloat(document.getElementById('market_spot_input').value)
             
                 let item= {
                     Multiple :              D_multiple,
@@ -480,11 +513,12 @@ document.getElementById('postForm').addEventListener('submit', getJsonData);
             var Adj_Ask= new_data.Adj_Ask
             var Adj_Bid_vol= new_data.Adj_Bid_vol
             var Adj_Ask_vol= new_data.Adj_Ask_vol
+            Vol_array= new_data.Sum_vol_array
+            Sum_of_Vega= new_data.Sum_of_vega
 <!-- On calculate success displaying the our_bid, our_ask, final_options_value -->            
-            document.getElementById('market_spot_input').value= market_spot
             document.getElementById('Our_bid_price').value=  parseFloat(new_data.Our_Adj_Bid).toFixed(2)
             document.getElementById('Our_ask_price').value=  parseFloat(new_data.Our_Adj_Ask).toFixed(2)
-            document.getElementById('option_td_value').value= parseFloat(new_data.Final_our_option_price).toFixed(2)
+            document.getElementById('option_td_value').value= parseFloat(new_data.Final_our_option_price).toFixed(3)
             document.getElementById('Our_bid_vol').value= parseFloat(new_data.Sum_Adj_Bid_vol).toFixed(2)
             document.getElementById('Our_ask_vol').value= parseFloat(new_data.Sum_Adj_Ask_vol).toFixed(2)
             
@@ -504,23 +538,22 @@ document.getElementById('postForm').addEventListener('submit', getJsonData);
            }); 
                          
 //Datatable for displaying the option prices and greeks
-         $(document).ready(function () {
-                $('#price_display_datatable').DataTable({
-                       info: false,
-                       paging: false,
-                       searching: false,
-                       destroy: true,
-                       ordering: false,
-                       data: display_array,
-                       columns: [
-                           { title: 'PRICE' },
-                           { title: 'DELTA' },
-                           { title: 'GAMMA' },
-                           { title: 'VEGA' },   
-                       ], 
-               });
-          });
-
+        $(document).ready(function () {
+            $('#price_display_datatable').DataTable({
+                           info: false,
+                           paging: false,
+                           searching: false,
+                           destroy: true,
+                           ordering: false,
+                           data: display_array,
+                           columns: [
+                               { title: 'PRICE' },
+                               { title: 'DELTA' },
+                               { title: 'GAMMA' },
+                               { title: 'VEGA' },   
+                           ], 
+                   });
+           });
       }
     xhr.send(JSON.stringify(arrayItem));   
 }
@@ -604,7 +637,11 @@ $('#Ticker_search_button').click( function() {
                              $(this).find("#Bid_vol").val('')
                              $(this).find("#Ask_vol").val('')    
                              $(this).find("#Spotprice").val('') 
-                             $(this).find("#Interest_Rate_value").val('')       
+                             $(this).find("#Interest_Rate_value").val('') 
+                             document.getElementById('IBD_ask_price').value=''
+                             document.getElementById('IBD_ask_vol').value= ''
+                             document.getElementById('IBD_bid_price').value=''
+                             document.getElementById('IBD_bid_vol').value= ''      
                            });                                          
                 }catch(e){
                 
@@ -793,13 +830,13 @@ $(document).on("change","#List_of_Strikes",function bid_ask_adding(e){
         xhr.setRequestHeader('content-type','application/json');
    
         xhr.onload = function(){
-           
-           try{
+   
                   var new_data=JSON.parse(this.responseText);
+                  market_spot= new_data.Strike_price_value
+                  document.getElementById('market_spot_input').value= market_spot  
+                                 
                   if(xhr.status == 200) { 
 
-                             market_spot= new_data.Strike_price_value
-                  
                              $.each($("#table_body #tr_row"),function(){
                                          
                                   var strike_box = $(this).closest('tr').index()+1; 
@@ -828,21 +865,8 @@ $(document).on("change","#List_of_Strikes",function bid_ask_adding(e){
                                  }    
                          });
                     }     
-           }
-           catch(e){
-                       $.each($("#table_body #tr_row"),function(){
-                                 
-                            var strike_box = $(this).closest('tr').index()+1; 
-                                           
-                             if(strike_box==index){                             
-                                         $(this).find("#Bid_price").val('')
-                                         $(this).find("#Ask_price").val('')
-                                         $(this).find("#Volatility").val('')
-                             }    
-                       });    
 
-                   alert("complete data is not present for this current strike");
-           }  
+ 
                
         };
      xhr.send(JSON.stringify(arrayItem));         
@@ -885,16 +909,12 @@ $(document).on('click','#bloom_refresh', function() {
              $('#bloom_refresh').text('Refresh');
              var new_data=JSON.parse(this.responseText);        
              var market_option_data= new_data.Option_market_values     
-             market_spot= new_data.Strike_price_value
-             document.getElementById('market_spot_input').value=market_spot
+             document.getElementById('market_spot_input').value= new_data.Strike_price_value
              document.getElementById('Our_bid_price').value= ''
              document.getElementById('Our_ask_price').value= ''
              document.getElementById('option_td_value').value= '' 
              document.getElementById('Our_bid_vol').value= ''
-             document.getElementById('Our_ask_vol').value=  ''                  
-                      
-//console.log(market_option_data)
-console.log(market_spot)
+             document.getElementById('Our_ask_vol').value=  ''                
                       
              $.each($("#table_body #tr_row"),function(){
                                 
@@ -918,9 +938,46 @@ console.log(market_spot)
      }
 });
  
+ 
 
 
+<!-- TO get IBD_BID_VOL using IBD_BID_PRICE ------>
+$('#IBD_bid_price').on('keyup', function() {
+
+     var Calculated_option_price= document.getElementById("option_td_value").value;
+     
+     if(Calculated_option_price== ''){
+         alert("Calculate the Electronic Markert Price")
+         document.getElementById('IBD_bid_price').value=''
+     }else{
+          var IBD_bid_price=  document.getElementById("IBD_bid_price").value;
+          
+          New_IBD_bid_vol=  ((Vol_array - ((Calculated_option_price - IBD_bid_price )/Sum_of_Vega)  )*100);
+          
+          document.getElementById('IBD_bid_vol').value= parseFloat(New_IBD_bid_vol).toFixed(2)
+     }
+});
+
+
+
+<!-- TO get IBD_BID_VOL using IBD_ASK_PRICE ------>
+$('#IBD_ask_price').on('keyup', function() {
+
+     var Calculated_option_price= document.getElementById("option_td_value").value;
+     
+     if(Calculated_option_price== ''){
+         alert("Calculate the Electronic Markert Price")
+         document.getElementById('IBD_ask_price').value=''
+     }else{
+          var IBD_ask_price=  document.getElementById("IBD_ask_price").value;
+          
+          New_IBD_ask_vol=  ((Vol_array - ((Calculated_option_price - IBD_ask_price )/Sum_of_Vega)  )*100);
+          
+          document.getElementById('IBD_ask_vol').value= parseFloat(New_IBD_ask_vol).toFixed(2)
+     }
+});
  
 </script>
 
 {% endblock %}
+
