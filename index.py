@@ -132,7 +132,7 @@ def BS_data():
             
     print(combine_pricer_list_result)
     
-    #---------------------From here coding for the option strategy display structure----------------------
+#---------------------From here coding for the option strategy display structure----------------------
     strategy_maturity_list,strategy_maturity_display_result=[],[]
     for i in range(len(Maturity)):
         datetime_str = Maturity[i]
@@ -142,11 +142,11 @@ def BS_data():
         month=datetime.strftime(datetime_object, '%B')
         month=month[:3]
         year=datetime.strftime(datetime_object, '%y')
-    #this is for the strategy logic so we need day,month and year
+#this is for the strategy logic so we need day,month and year
         strategy_maturity=day+month+year
         strategy_maturity=strategy_maturity.upper()
         strategy_maturity_list.append(strategy_maturity)
-    #this is for appending in the end list with only month and year
+#this is for appending in the end list with only month and year
         strategy_maturity_display=month+year
         strategy_maturity_display=strategy_maturity_display.upper()
         strategy_maturity_display_result.append(strategy_maturity_display)    
@@ -166,7 +166,7 @@ def BS_data():
     print('Mat_result',Mat_result)
     
     
-    #Here Display_Mat_list_matching is to check where all the maturities in the strategy_maturity_list are same or not
+#Here Display_Mat_list_matching is to check where all the maturities in the strategy_maturity_list are same or not
     disp_Mat_list_matching = strategy_maturity_display_result.count(strategy_maturity_display_result[0]) == len(strategy_maturity_display_result)
     if (disp_Mat_list_matching):
         print("All the Maturities are Equal")
@@ -177,7 +177,7 @@ def BS_data():
     print('disp_Mat_list_matching_result',disp_Mat_list_matching_result)
     
     
-    #Here Strike_list_matching is to check where all the strikes in the Strikeprice list are same or not        
+#Here Strike_list_matching is to check where all the strikes in the Strikeprice list are same or not        
     Strike_list_matching= Strikeprice.count(Strikeprice[0]) == len(Strikeprice)
     if (Strike_list_matching):
         print("Strikes are Same")
@@ -185,17 +185,17 @@ def BS_data():
     else:
         print("Strikes are not same")
         Strike_match_result = "/".join(map(str, Strikeprice))
-    #print(Strike_match_result)
+#print(Strike_match_result)
     
     
-    #Code for making option type as P or C depending upon put or call AND MULTIPLE SIGN
+#Code for making option type as P or C depending upon put or call AND MULTIPLE SIGN
     Strategy_Option_type_data=[]
     for i in range(len(Option_data_zone)):
         if(Option_data_zone[0] == 0):
             Strategy_zone= 'E'
         else:
             Strategy_zone= 'A'    
-    #print('Strategy_zone',Strategy_zone)
+#print('Strategy_zone',Strategy_zone)
     
     for i in range(len(Multiple)): 
         if(Multiple[i]==1 and Option_type_data[i]==0 ):
@@ -216,15 +216,14 @@ def BS_data():
             Strategy_Option_type_data.append('-XC') 
     print('Strategy_Option_type_data', Strategy_Option_type_data)
     
-    #Code for joining all the strings into one string
+#Code for joining all the strings into one string
     Join_Op_type_data = ''.join(map(str, Strategy_Option_type_data))
     print('Join_Op_type_data',Join_Op_type_data)
-    type(Join_Op_type_data)
     
     print('Mat_list_matching',Mat_list_matching)
     print('Strike_list_matching',Strike_list_matching)
     
-    #FINAL STRATEGY DISPLAY CODE
+#FINAL STRATEGY DISPLAY CODE
     if(Join_Op_type_data == '+C' or Join_Op_type_data =='-C'):    
         Final_STR_builder= Strategy_zone+ 'C'                           #Call 
     elif(Join_Op_type_data == '+P' or Join_Op_type_data == '-P'):   
@@ -265,9 +264,10 @@ def BS_data():
         
     print('Final_STR_builder',Final_STR_builder)
     
-#by declaring the function_return_result list and other lists before for loop helps to capture the values returning by the function inside the foor loop
+    
+    
+#By declaring the function_return_result list and other lists before for loop helps to capture the values returning by the function inside the foor loop
     function_return_result, function_return_result_1, Vol_array, Vol_array_1,Prices,Prices_1,Vega,Delta=[],[],[],[],[],[],[],[]
-   
     Adj_Bid, Adj_Ask, Adj_Bid_vol, Adj_Ask_vol=[],[],[],[]
     Our_Adj_Bid,Our_Adj_Ask=0,0
     Final_our_option_price=0
@@ -395,7 +395,7 @@ def BS_data():
             Our_Adj_Ask= round(Our_Adj_Ask, 2)
     print("Displaying_Our_Adj_Ask",Our_Adj_Ask)
 
-    #Displaying the final string of Strategy 
+#Displaying the final string of Strategy 
     Display_strategy= Ticker[0]+ ' ' + disp_Mat_list_matching_result + ' ' + str(Strike_match_result) + ' '+ Final_STR_builder +' '+ 'REF'+ ' '+ str(Spotprice[0]) + ' '+ str(Our_Adj_Bid) + '/' + str(Our_Adj_Ask)
     print(Display_strategy)
     
@@ -409,8 +409,9 @@ def BS_data():
     return {'Display_strategy':Display_strategy, 'display_options_data':option_price_value_result, 'Adj_Bid':Adj_Bid, 'Adj_Ask':Adj_Ask,'Adj_Bid_vol':Adj_Bid_vol,
             'Adj_Ask_vol':Adj_Ask_vol,'Sum_vol_array':Sum_vol_array, 'Sum_of_vega':Sum_of_vega, 'Sum_Adj_Bid_vol':Sum_Adj_Bid_vol, 'Sum_Adj_Ask_vol':Sum_Adj_Ask_vol, 'Our_Adj_Bid':Our_Adj_Bid,'Our_Adj_Ask': Our_Adj_Ask, 'Final_our_option_price':Final_our_option_price  }
 
+
+
 def get_option_price(valuation_date, expiry_date, underlying_price, strike_price, volatility, risk_free_rate, dividends, is_american ,is_call ):
-    
     new_value= 0
     div_dates= []
     div_values= []
@@ -420,14 +421,14 @@ def get_option_price(valuation_date, expiry_date, underlying_price, strike_price
             div_values.append(value)
             div_dates.append(ql.Date(*date))
 
-        # Reformat dates from list into QL date format
+#Reformat dates from list into QL date format
     valuation_date = ql.Date(*valuation_date)
     expiry_date = ql.Date(*expiry_date)
     ql.Settings.instance().setEvaluationDate(valuation_date)
     day_count = ql.Actual365Fixed()
     calendar = ql.UnitedStates()
 
-        # Reformat prices and rates from list into QL format
+#Reformat prices and rates from list into QL format
     underlying_price = ql.QuoteHandle(ql.SimpleQuote(underlying_price))
     risk_free_rate = ql.YieldTermStructureHandle(ql.FlatForward(valuation_date, risk_free_rate, day_count))
     volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(valuation_date, calendar, volatility, day_count))
@@ -442,29 +443,31 @@ def get_option_price(valuation_date, expiry_date, underlying_price, strike_price
         exercise = ql.EuropeanExercise(expiry_date)
     option = ql.DividendVanillaOption(payoff, exercise, div_dates, div_values)
 
-        # Black Scholes process
+#Black Scholes process
     process = ql.BlackScholesProcess(underlying_price,risk_free_rate,volatility)
 
-        # Create option's pricing engine
+#Create option's pricing engine
     precision_steps = 1000
     engine = ql.FdBlackScholesVanillaEngine(process, precision_steps, precision_steps - 1)
     option.setPricingEngine(engine)
 
-        # Price the option
+#Price the option
     new_value="{0:.3f}".format(option.NPV())
     
     Delta="{0:.3f}".format(option.delta())
     Gamma="{0:.3f}".format(option.gamma())
     Greeks =[]
-    #Greeks.append(volatility)
+#Greeks.append(volatility)
     Greeks.append(float(new_value))
     Greeks.append(float(Delta))
     Greeks.append(float(Gamma))
 
     return Greeks
 
+
+
+
 def get_option_price_1(valuation_date, expiry_date, underlying_price, strike_price, volatility, risk_free_rate, dividends, is_american ,is_call ):
-    
     new_value= 0
     div_dates = []
     div_values = []
@@ -476,19 +479,19 @@ def get_option_price_1(valuation_date, expiry_date, underlying_price, strike_pri
             div_values.append(value)
             div_dates.append(ql.Date(*date))
 
-# Reformat dates from list into QL date format
+#Reformat dates from list into QL date format
     valuation_date = ql.Date(*valuation_date)
     expiry_date = ql.Date(*expiry_date)
     ql.Settings.instance().setEvaluationDate(valuation_date)
     day_count = ql.Actual365Fixed()
     calendar = ql.UnitedStates()
 
-# Reformat prices and rates from list into QL format
+#Reformat prices and rates from list into QL format
     underlying_price = ql.QuoteHandle(ql.SimpleQuote(underlying_price))
     risk_free_rate = ql.YieldTermStructureHandle(ql.FlatForward(valuation_date, risk_free_rate, day_count))
     volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(valuation_date, calendar, volatility, day_count))
 
-# Create option
+#Create option
     if is_call:
         payoff = ql.PlainVanillaPayoff(ql.Option.Call, strike_price)
     else:
@@ -499,15 +502,15 @@ def get_option_price_1(valuation_date, expiry_date, underlying_price, strike_pri
         exercise = ql.EuropeanExercise(expiry_date)
     option = ql.DividendVanillaOption(payoff, exercise, div_dates, div_values)
 
-# Black Scholes process
+#Black Scholes process
     process = ql.BlackScholesProcess(underlying_price, risk_free_rate,volatility)
 
-# Create option's pricing engine
+#Create option's pricing engine
     precision_steps = 1000
     engine = ql.FdBlackScholesVanillaEngine(process, precision_steps, precision_steps - 1)
     option.setPricingEngine(engine)
 
-# Price the option
+#Price the option
     new_value="{0:.3f}".format(option.NPV())
 #print("Delta:", option.delta())
 #print("gamma:", option.gamma())
