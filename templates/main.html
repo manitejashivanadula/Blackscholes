@@ -134,10 +134,16 @@
                         </tr> 
                   </tbody>         
            </table> 
-              <div>
-                  <button   type="button" id="bloom_refresh" class="btn btn-secondary btn-sm" style="margin-left:2240px;">Refresh</button>    
-                  <button   type="submit" id="eu_option_button" class="btn btn-primary btn-md" style="margin-left:2px;">Calculate</button>  
-                  <button   type="button" id="Page_Reload" onClick="window.location.reload();" class="btn btn-secondary btn-sm"  style="margin-left:2px;">Clear</button> 
+              <div class="row">
+                  <div class="col-4">
+                      <input type="text" class="form-control" id="Display_strategy" placeholder="Strategy" >
+                  </div>
+                  <div class="col-6"></div>
+                  <div class="col-2">
+                      <button   type="button" id="bloom_refresh" class="btn btn-secondary btn-sm" style="margin-left:120px" >Refresh</button>    
+                      <button   type="submit" id="eu_option_button" class="btn btn-primary btn-md" style="margin-right" >Calculate</button>  
+                      <button   type="button" id="Page_Reload" onClick="window.location.reload();" class="btn btn-secondary btn-sm" style="margin-right" >Clear</button>
+                  </div>
              </div>
       </form> 
 </div>    
@@ -181,7 +187,7 @@
                      <table class="table table-striped">
                            <thead>
                               <tr>    
-                                 <th colspan="6" class="text-center"><B>INTERDEALDER BROKER MARKET PRICES</B></th>
+                                 <th colspan="6" class="text-center"><B>INTERDEALER BROKER MARKET PRICES</B></th>
                               </tr>
                               <tr>
                                   <th class="text-center"> BID VOL </th>
@@ -459,11 +465,12 @@ document.getElementById('postForm').addEventListener('submit', getJsonData);
                 }
 //This helps to convert if any string present in dividend array to float values                
              divdata_array = divdata_array.map(Number);
+             document.getElementById('Display_strategy').value= ''
 
              $.each($("#table_body #tr_row"),function(index,value){
              
                 let D_multiple=             parseInt($(this).find("#Multiple").val())
-                let D_ticker=               $(this).find("#Ticker_data").val()
+                let D_ticker=               $(this).find("#Ticker_value").val()
                 let D_option_zone=          parseInt($(this).find("#Option_data_zone").val())
                 let D_option_type=          parseInt($(this).find("#Option_type_data").val())
                 let D_spot_price=           parseFloat($(this).find("#Spotprice").val())
@@ -521,6 +528,7 @@ document.getElementById('postForm').addEventListener('submit', getJsonData);
             document.getElementById('option_td_value').value= parseFloat(new_data.Final_our_option_price).toFixed(3)
             document.getElementById('Our_bid_vol').value= parseFloat(new_data.Sum_Adj_Bid_vol).toFixed(2)
             document.getElementById('Our_ask_vol').value= parseFloat(new_data.Sum_Adj_Ask_vol).toFixed(2)
+            document.getElementById('Display_strategy').value= new_data.Display_strategy
             
             $.each($("#table_body #tr_row"),function(){
                         
@@ -669,7 +677,7 @@ $('#Ticker_search_button').click( function() {
  }); 
  
  
-<!----- Getting the interest rate using the maturity ---------->
+<!----- Getting the Interest Rates using the maturity ---------->
 $(document).on('change','#Maturity', function() {
 
             var index= $(this).closest('tr').get(0).rowIndex;
@@ -830,7 +838,7 @@ $(document).on("change","#List_of_Strikes",function bid_ask_adding(e){
         xhr.setRequestHeader('content-type','application/json');
    
         xhr.onload = function(){
-   
+        try{
                   var new_data=JSON.parse(this.responseText);
                   market_spot= new_data.Strike_price_value
                   document.getElementById('market_spot_input').value= market_spot  
@@ -864,10 +872,12 @@ $(document).on("change","#List_of_Strikes",function bid_ask_adding(e){
                                         $(this).find("#Volatility").val('')
                                  }    
                          });
-                    }     
-
- 
-               
+                    }
+            }
+            catch(e){
+                alert("complete data is not present for this current strike");
+            }     
+   
         };
      xhr.send(JSON.stringify(arrayItem));         
 });
