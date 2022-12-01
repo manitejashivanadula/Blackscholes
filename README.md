@@ -1,4 +1,5 @@
-![PRICER](https://user-images.githubusercontent.com/117934424/204288605-6dc9d38e-ca63-401c-9e1f-d9a20a8c03c5.PNG)
+![PRICER](https://user-images.githubusercontent.com/117934424/205066174-f253384b-2325-4fc3-a983-4ba680ff48d5.PNG)
+
 
 #OPTIONS PRICING TOOL  
 
