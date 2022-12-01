@@ -8,6 +8,7 @@ from dateutil.parser import parse
 import bloom_api
 from numpy import array
 
+
 app= Flask(__name__)
 app.add_url_rule('/Blackscholes_bloomberg_apicall',view_func=bloom_api.Bloom_ticker_api, methods=['GET','POST'])
 app.add_url_rule('/Blackscholes_bloomberg_strikecall',view_func=bloom_api.Bloom_strike_api, methods=['GET','POST'])
@@ -31,7 +32,7 @@ def BS_data():
     NEW_raw_data = request.get_json()
     Quantlib_data = NEW_raw_data 
         
-    Option_data_zone, Option_type_data, Strikeprice, Spotprice, Volatility, Interestrate, Dividend, Maturity, Dividend_date, Multiple, Market_Bid_price, Market_Ask_price, Market_spot=[],[],[],[],[],[],[],[],[],[],[],[],[]
+    Ticker, Option_data_zone, Option_type_data, Strikeprice, Spotprice, Volatility, Interestrate, Dividend, Maturity, Dividend_date, Multiple, Market_Bid_price, Market_Ask_price, Market_spot=[],[],[],[],[],[],[],[],[],[],[],[],[],[]
 
 #forloop for extracting the raw data from the json and appending them into the list
     for i in Quantlib_data:
@@ -48,6 +49,7 @@ def BS_data():
         Market_Bid_price.append(i['Bid_price'])
         Market_Ask_price.append(i['Ask_price'])
         Market_spot.append(i['Market_spot'])
+        Ticker.append(i['Ticker_data'])
     
 #for taking only the first items of the dividend and dividend date lists
     Dividend_array, Dividend_date_array =[],[]
@@ -129,6 +131,139 @@ def BS_data():
         combine_pricer_list_result[i].insert(6,Updated_Matched_div_date[i])
             
     print(combine_pricer_list_result)
+    
+    #---------------------From here coding for the option strategy display structure----------------------
+    strategy_maturity_list,strategy_maturity_display_result=[],[]
+    for i in range(len(Maturity)):
+        datetime_str = Maturity[i]
+        new_datetime_str = datetime_str.replace("/", "-" )
+        datetime_object = datetime.strptime(new_datetime_str, '%m-%d-%y').date()
+        day=datetime.strftime(datetime_object, '%d')
+        month=datetime.strftime(datetime_object, '%B')
+        month=month[:3]
+        year=datetime.strftime(datetime_object, '%y')
+    #this is for the strategy logic so we need day,month and year
+        strategy_maturity=day+month+year
+        strategy_maturity=strategy_maturity.upper()
+        strategy_maturity_list.append(strategy_maturity)
+    #this is for appending in the end list with only month and year
+        strategy_maturity_display=month+year
+        strategy_maturity_display=strategy_maturity_display.upper()
+        strategy_maturity_display_result.append(strategy_maturity_display)    
+    
+    print(strategy_maturity_list)
+    print(strategy_maturity_display_result)
+    
+    
+    #Here Mat_list_matching is to check where all the maturities in the strategy_maturity_list are same or not
+    Mat_list_matching = strategy_maturity_list.count(strategy_maturity_list[0]) == len(strategy_maturity_list)
+    if (Mat_list_matching):
+        print("All the elements are Equal")
+        Mat_result= strategy_maturity_list[0]
+    else:
+        print("Elements are not equal")
+        Mat_result = "/".join([str(item) for item in strategy_maturity_list])
+    print('Mat_result',Mat_result)
+    
+    
+    #Here Display_Mat_list_matching is to check where all the maturities in the strategy_maturity_list are same or not
+    disp_Mat_list_matching = strategy_maturity_display_result.count(strategy_maturity_display_result[0]) == len(strategy_maturity_display_result)
+    if (disp_Mat_list_matching):
+        print("All the Maturities are Equal")
+        disp_Mat_list_matching_result= strategy_maturity_display_result[0]
+    else:
+        print("Maturities are not equal")
+        disp_Mat_list_matching_result = "/".join([str(item) for item in strategy_maturity_display_result])
+    print('disp_Mat_list_matching_result',disp_Mat_list_matching_result)
+    
+    
+    #Here Strike_list_matching is to check where all the strikes in the Strikeprice list are same or not        
+    Strike_list_matching= Strikeprice.count(Strikeprice[0]) == len(Strikeprice)
+    if (Strike_list_matching):
+        print("Strikes are Same")
+        Strike_match_result= Strikeprice[0]
+    else:
+        print("Strikes are not same")
+        Strike_match_result = "/".join(map(str, Strikeprice))
+    #print(Strike_match_result)
+    
+    
+    #Code for making option type as P or C depending upon put or call AND MULTIPLE SIGN
+    Strategy_Option_type_data=[]
+    for i in range(len(Option_data_zone)):
+        if(Option_data_zone[0] == 0):
+            Strategy_zone= 'E'
+        else:
+            Strategy_zone= 'A'    
+    #print('Strategy_zone',Strategy_zone)
+    
+    for i in range(len(Multiple)): 
+        if(Multiple[i]==1 and Option_type_data[i]==0 ):
+            Strategy_Option_type_data.append('+P')
+        elif(Multiple[i]==1 and Option_type_data[i]==1 ):
+            Strategy_Option_type_data.append('+C')    
+        elif(Multiple[i]==-1 and Option_type_data[i]==0 ):
+            Strategy_Option_type_data.append('-P')    
+        elif(Multiple[i]==-1 and Option_type_data[i]==1 ):
+            Strategy_Option_type_data.append('-C')
+        if(Multiple[i]>1 and Option_type_data[i]==0 ):
+            Strategy_Option_type_data.append('+XP')
+        elif(Multiple[i]>1 and Option_type_data[i]==1 ):
+            Strategy_Option_type_data.append('+XC')    
+        elif(Multiple[i]<-1 and Option_type_data[i]==0 ):
+            Strategy_Option_type_data.append('-XP')    
+        elif(Multiple[i]<-1 and Option_type_data[i]==1 ):
+            Strategy_Option_type_data.append('-XC') 
+    print('Strategy_Option_type_data', Strategy_Option_type_data)
+    
+    #Code for joining all the strings into one string
+    Join_Op_type_data = ''.join(map(str, Strategy_Option_type_data))
+    print('Join_Op_type_data',Join_Op_type_data)
+    type(Join_Op_type_data)
+    
+    print('Mat_list_matching',Mat_list_matching)
+    print('Strike_list_matching',Strike_list_matching)
+    
+    #FINAL STRATEGY DISPLAY CODE
+    if(Join_Op_type_data == '+C' or Join_Op_type_data =='-C'):    
+        Final_STR_builder= Strategy_zone+ 'C'                           #Call 
+    elif(Join_Op_type_data == '+P' or Join_Op_type_data == '-P'):   
+        Final_STR_builder= Strategy_zone+ 'P'                            #Put
+        
+    elif((Join_Op_type_data == '+C+P' or Join_Op_type_data =='+P+C') and  Mat_list_matching == True  and Strike_list_matching ==True) :
+        Final_STR_builder= Strategy_zone+'STD'                          #Straddle
+    elif((Join_Op_type_data == '+C+P' or Join_Op_type_data=='+P+C') and  Mat_list_matching == True  and Strike_list_matching ==False) :
+        Final_STR_builder= Strategy_zone+'STG'                          #Strangle
+    
+    elif((Join_Op_type_data == '+C-C' or Join_Op_type_data =='-C+C') and  Mat_list_matching == True and Strike_list_matching ==False):
+        Final_STR_builder= Strategy_zone+'CS'                           #Call spread
+    elif((Join_Op_type_data == '+P-P' or Join_Op_type_data =='-P+P') and Mat_list_matching == True  and Strike_list_matching ==False):
+        Final_STR_builder= Strategy_zone+'PS'                            #Put Spread
+        
+    elif((Join_Op_type_data == '+C-C' or Join_Op_type_data =='-C+C') and  Mat_list_matching == False  and Strike_list_matching ==True):
+        Final_STR_builder= Strategy_zone+'CC'                           #Call Calender
+    elif((Join_Op_type_data == '+P-P' or Join_Op_type_data =='-P+P') and  Mat_list_matching == False  and Strike_list_matching ==True):
+        Final_STR_builder= Strategy_zone+'PC'                           #Put Calender 
+        
+    elif((Join_Op_type_data == '+C-C-C' or  Join_Op_type_data =='-C+C-C' or Join_Op_type_data =='-C-C+C') and  Mat_list_matching == True and Strike_list_matching ==False ):
+        Final_STR_builder= Strategy_zone+'CL'                           #Call ladder
+    elif((Join_Op_type_data == '+P-P-P' or Join_Op_type_data =='-P+P-P' or Join_Op_type_data =='-P-P+P') and  Mat_list_matching == True and Strike_list_matching ==False ):
+        Final_STR_builder= Strategy_zone+'PL'                           #Put ladder 
+    
+    elif((Join_Op_type_data == '+C-XC' or Join_Op_type_data =='-XC+C') and  Mat_list_matching == True and Strike_list_matching ==False ):
+        Final_STR_builder= Strategy_zone+'CR'                           #Call Ratio
+    elif((Join_Op_type_data == '+P-XP' or Join_Op_type_data =='-XP+P' )and  Mat_list_matching == True and Strike_list_matching ==False ):
+        Final_STR_builder= Strategy_zone+'PR'                            #Put Ratio
+    
+    elif(Join_Op_type_data == '+C-XC+C' or Join_Op_type_data =='-XC+C+C' or Join_Op_type_data =='+C+C-XC' and  Mat_list_matching == True and Strike_list_matching ==False ):
+        Final_STR_builder= Strategy_zone+'CB'                           #Call Butterfly
+    elif(Join_Op_type_data == '+P-XP+P' or Join_Op_type_data =='-XP+P+P' or Join_Op_type_data =='+P+P-XP' and  Mat_list_matching == True and Strike_list_matching ==False ):
+        Final_STR_builder= Strategy_zone+'PB'                           #Put Butterfly
+        
+    else:
+        Final_STR_builder= 'Not matched with any strategy'
+        
+    print('Final_STR_builder',Final_STR_builder)
     
 #by declaring the function_return_result list and other lists before for loop helps to capture the values returning by the function inside the foor loop
     function_return_result, function_return_result_1, Vol_array, Vol_array_1,Prices,Prices_1,Vega,Delta=[],[],[],[],[],[],[],[]
@@ -245,20 +380,33 @@ def BS_data():
     for i in range(len(Adj_Bid)):
         if(Multiple[i]>=1):
             Our_Adj_Bid=Our_Adj_Bid+(Adj_Bid[i]*Multiple[i])
+            Our_Adj_Bid= round(Our_Adj_Bid, 2)
         else:
-            Our_Adj_Bid=float("{0:.2f}".format(Our_Adj_Bid+(Adj_Ask[i]*Multiple[i])))
-
-    print("Our_Adj_Bid",Our_Adj_Bid)
-
+            Our_Adj_Bid=Our_Adj_Bid+(Adj_Ask[i]*Multiple[i])
+            Our_Adj_Bid= round(Our_Adj_Bid, 2)
+    print("Displaying_Our_Adj_Bid",Our_Adj_Bid)
+    
     for i in range(len(Adj_Ask)):
         if(Multiple[i]>=1):
             Our_Adj_Ask=Our_Adj_Ask+(Adj_Ask[i]*Multiple[i])
+            Our_Adj_Ask= round(Our_Adj_Ask, 2)
         else:
-            Our_Adj_Ask=float("{0:.2f}".format(Our_Adj_Ask+(Adj_Bid[i]*Multiple[i])))
-        
-        print("Our_Adj_Ask",Our_Adj_Ask)
+            Our_Adj_Ask=Our_Adj_Ask+(Adj_Bid[i]*Multiple[i])
+            Our_Adj_Ask= round(Our_Adj_Ask, 2)
+    print("Displaying_Our_Adj_Ask",Our_Adj_Ask)
+
+    #Displaying the final string of Strategy 
+    Display_strategy= Ticker[0]+ ' ' + disp_Mat_list_matching_result + ' ' + str(Strike_match_result) + ' '+ Final_STR_builder +' '+ 'REF'+ ' '+ str(Spotprice[0]) + ' '+ str(Our_Adj_Bid) + '/' + str(Our_Adj_Ask)
+    print(Display_strategy)
     
-    return {'display_options_data':option_price_value_result, 'Adj_Bid':Adj_Bid, 'Adj_Ask':Adj_Ask,'Adj_Bid_vol':Adj_Bid_vol,
+    if(Final_STR_builder== 'Not matched with any strategy'):
+        Display_strategy= 'Not matched with any strategy'
+    else:
+        Display_strategy= Display_strategy
+    
+    print(Display_strategy)
+    
+    return {'Display_strategy':Display_strategy, 'display_options_data':option_price_value_result, 'Adj_Bid':Adj_Bid, 'Adj_Ask':Adj_Ask,'Adj_Bid_vol':Adj_Bid_vol,
             'Adj_Ask_vol':Adj_Ask_vol,'Sum_vol_array':Sum_vol_array, 'Sum_of_vega':Sum_of_vega, 'Sum_Adj_Bid_vol':Sum_Adj_Bid_vol, 'Sum_Adj_Ask_vol':Sum_Adj_Ask_vol, 'Our_Adj_Bid':Our_Adj_Bid,'Our_Adj_Ask': Our_Adj_Ask, 'Final_our_option_price':Final_our_option_price  }
 
 def get_option_price(valuation_date, expiry_date, underlying_price, strike_price, volatility, risk_free_rate, dividends, is_american ,is_call ):
