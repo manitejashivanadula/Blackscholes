@@ -44,6 +44,8 @@ k) Call Ratio
 l) Put Ratio
 m) Call Butterfly 
 n) Put Butterfly
+o) Risk Reversal
+p) Synthetic 
 
 
 Python Libraries to run this tool...
