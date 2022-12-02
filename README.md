@@ -30,22 +30,37 @@ and other screen is an InterdealerBroker Screen to input thier BID & ASK values 
 Eg of quote: MBG GY DEC22 60 AC REF 61.40 2.65/2.75 
 
 =>In total it can track 16 Strategies
+
 a) Call 
 
 b) Put
+
 c) Straddle
+
 d) Strangle
+
 e) Call Spread
+
 f) Put Spread
+
 g) Call Calender
+
 h) Put Calender
+
 i) Call Ladder
+
 j) Put Ladder
+
 k) Call Ratio
+
 l) Put Ratio
+
 m) Call Butterfly 
+
 n) Put Butterfly
+
 o) Risk Reversal
+
 p) Synthetic 
 
 
