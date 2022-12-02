@@ -23,6 +23,29 @@ I have made this tool by keeping my mind to make the options pricing easier. Thi
 
 and other screen is an InterdealerBroker Screen to input thier BID & ASK values and compare with Adjusted BID-VOL & ASK-VOL.
 
+#STRATEGIES 
+
+=> This tool can recognize the type of strategy you are pricing eg: Call Spread or Straddle and display the quote with the strategy.
+
+Eg of quote: MBG GY DEC22 60 AC REF 61.40 2.65/2.75 
+
+=>In total it can track 14 Strategies
+a) Call 
+b) Put
+c) Straddle
+d) Strangle
+e) Call Spread
+f) Put Spread
+g) Call Calender
+h) Put Calender
+i) Call Ladder
+j) Put Ladder
+k) Call Ratio
+l) Put Ratio
+m) Call Butterfly 
+n) Put Butterfly
+
+
 Python Libraries to run this tool...
 
 1) pip install QuantLib-Python
