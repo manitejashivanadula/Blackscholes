@@ -106,7 +106,7 @@ def BS_data():
                 Dividend_date_list.append(int(year))
                 Matched_div_date.append([Dividend_date_list,Dividend_array[j]])
         Updated_Matched_div_date.insert(i,Matched_div_date)
-    #print('Updated_Matched_div_date',Updated_Matched_div_date)
+#print('Updated_Matched_div_date',Updated_Matched_div_date)
     
 #if divdates are less than maturity dates so the array will be empty to repalce the empty array with below hardcoded code
     Empty_div_date=[today_date,0]
@@ -227,12 +227,17 @@ def BS_data():
     if(Join_Op_type_data == '+C' or Join_Op_type_data =='-C'):    
         Final_STR_builder= Strategy_zone+ 'C'                           #Call 
     elif(Join_Op_type_data == '+P' or Join_Op_type_data == '-P'):   
-        Final_STR_builder= Strategy_zone+ 'P'                            #Put
+        Final_STR_builder= Strategy_zone+ 'P'                           #Put
         
     elif((Join_Op_type_data == '+C+P' or Join_Op_type_data =='+P+C') and  Mat_list_matching == True  and Strike_list_matching ==True) :
         Final_STR_builder= Strategy_zone+'STD'                          #Straddle
     elif((Join_Op_type_data == '+C+P' or Join_Op_type_data=='+P+C') and  Mat_list_matching == True  and Strike_list_matching ==False) :
         Final_STR_builder= Strategy_zone+'STG'                          #Strangle
+
+    elif((Join_Op_type_data == '-C+P' or Join_Op_type_data =='+C-P' or Join_Op_type_data =='-P+C' or Join_Op_type_data =='+P-C') and  Mat_list_matching == True  and Strike_list_matching ==False) :
+        Final_STR_builder= Strategy_zone+'RR'                          #Risk reversal
+    elif((Join_Op_type_data == '-C+P' or Join_Op_type_data =='+C-P' or Join_Op_type_data =='-P+C' or Join_Op_type_data =='+P-C') and  Mat_list_matching == False  and Strike_list_matching ==True) :
+        Final_STR_builder= Strategy_zone+'SYN'                          #Synthetic
     
     elif((Join_Op_type_data == '+C-C' or Join_Op_type_data =='-C+C') and  Mat_list_matching == True and Strike_list_matching ==False):
         Final_STR_builder= Strategy_zone+'CS'                           #Call spread
@@ -396,7 +401,7 @@ def BS_data():
     print("Displaying_Our_Adj_Ask",Our_Adj_Ask)
 
 #Displaying the final string of Strategy 
-    Display_strategy= Ticker[0]+ ' ' + disp_Mat_list_matching_result + ' ' + str(Strike_match_result) + ' '+ Final_STR_builder +' '+ 'REF'+ ' '+ str(Spotprice[0]) + ' '+ str(Our_Adj_Bid) + '/' + str(Our_Adj_Ask)
+    Display_strategy= Ticker[0]+ ' ' + disp_Mat_list_matching_result + ' ' + str(Strike_match_result) + ' '+ Final_STR_builder +' '+ 'REF'+ ' '+ str(Spotprice[0]) 
     print(Display_strategy)
     
     if(Final_STR_builder== 'Not matched with any strategy'):
