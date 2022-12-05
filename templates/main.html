@@ -21,6 +21,10 @@
         table tr:last-child {
           font-weight: bold;  
         }
+        :root{
+        --bs-body-font-size: 2rem;
+        --bs-body-font-size: 2rem;
+        }
          
     </style>
 
@@ -138,7 +142,12 @@
                   <div class="col-4">
                       <input type="text" class="form-control" id="Display_strategy" placeholder="Strategy" >
                   </div>
-                  <div class="col-6"></div>
+                  <div class="col-2">                  
+                      <svg id="Copy_button"  xmlns="http://www.w3.org/2000/svg" width="25" height="30" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                      <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                      </svg> 
+                  </div>
+                  <div class="col-4"></div>
                   <div class="col-2">
                       <button   type="button" id="bloom_refresh" class="btn btn-secondary btn-sm" style="margin-left:120px" >Refresh</button>    
                       <button   type="submit" id="eu_option_button" class="btn btn-primary btn-md" style="margin-right" >Calculate</button>  
@@ -265,6 +274,9 @@
 </div>
 
 <script type="text/javascript">
+
+        var Display_strategy_builder = '';
+        
         var Currency_rates =  '';
         
         var Vol_array      =  '';
@@ -294,6 +306,8 @@ var maturity=document.getElementById("Maturity");
 <!-- Funciton for Adding new row by cloning the previous row and also emptying the required newly cloned rows   --> 
 $('#add_more_item').click(function(e) {
         let ticker_name=   document.getElementById("Ticker_value").value;
+        
+        setTimeout(function(){document.getElementById("eu_option_button").disabled = false;},"time in miliseconds");
         
         if(ticker_name==''){
             alert("Enter the valid Ticker")
@@ -445,13 +459,12 @@ $('#Spotprice').on('keyup', function() {
  
  
  
-<!--Submitting the data to the python on clicking the calculate button
-
---> 
+<!--Submitting the data to the python on clicking the calculate button--> 
 document.getElementById('postForm').addEventListener('submit', getJsonData);
 
- function getJsonData(e){
-      
+function getJsonData(e){ 
+setTimeout(function(){document.getElementById("eu_option_button").disabled = true;},"time in miliseconds"); 
+   
        var display_row_count=[];  
        
               e.preventDefault();
@@ -529,6 +542,7 @@ document.getElementById('postForm').addEventListener('submit', getJsonData);
             document.getElementById('Our_bid_vol').value= parseFloat(new_data.Sum_Adj_Bid_vol).toFixed(2)
             document.getElementById('Our_ask_vol').value= parseFloat(new_data.Sum_Adj_Ask_vol).toFixed(2)
             document.getElementById('Display_strategy').value= new_data.Display_strategy
+            Display_strategy_builder= new_data.Display_strategy
             
             $.each($("#table_body #tr_row"),function(){
                         
@@ -887,6 +901,7 @@ $(document).on("change","#List_of_Strikes",function bid_ask_adding(e){
 $(document).on('click','#bloom_refresh', function() {
 
     let ticker_name=   document.getElementById("Ticker_value").value;
+    setTimeout(function(){document.getElementById("eu_option_button").disabled = false;},"time in miliseconds"); 
         
     if(ticker_name==''){
             alert("Enter the valid Ticker")
@@ -941,8 +956,6 @@ $(document).on('click','#bloom_refresh', function() {
                         }
                     }
              });               
-        
-        
          }
         xhr.send(JSON.stringify(arrayItem)); 
      }
@@ -962,15 +975,18 @@ $('#IBD_bid_price').on('keyup', function() {
      }else{
           var IBD_bid_price=  document.getElementById("IBD_bid_price").value;
           
+          var Display_strategy= document.getElementById("Display_strategy").value;
+          
           New_IBD_bid_vol=  ((Vol_array - ((Calculated_option_price - IBD_bid_price )/Sum_of_Vega)  )*100);
           
-          document.getElementById('IBD_bid_vol').value= parseFloat(New_IBD_bid_vol).toFixed(2)
+          document.getElementById('IBD_bid_vol').value= parseFloat(New_IBD_bid_vol).toFixed(2)     
      }
 });
 
 
 
-<!-- TO get IBD_BID_VOL using IBD_ASK_PRICE ------>
+
+<!-- TO get IBD_BID_VOL using IBD_ASK_PRICE --->
 $('#IBD_ask_price').on('keyup', function() {
 
      var Calculated_option_price= document.getElementById("option_td_value").value;
@@ -982,12 +998,41 @@ $('#IBD_ask_price').on('keyup', function() {
           var IBD_ask_price=  document.getElementById("IBD_ask_price").value;
           
           New_IBD_ask_vol=  ((Vol_array - ((Calculated_option_price - IBD_ask_price )/Sum_of_Vega)  )*100);
-          
+      
           document.getElementById('IBD_ask_vol').value= parseFloat(New_IBD_ask_vol).toFixed(2)
      }
 });
- 
+
+
+
+
+<!-- To Copy the Strategy on click of copy button --->
+$(document).on('click','#Copy_button', function() {
+
+    var IBD_bid_price=  document.getElementById("IBD_bid_price").value;
+    var IBD_ask_price=  document.getElementById("IBD_ask_price").value;
+    
+    if(IBD_bid_price && IBD_ask_price != ''){
+          var DISP_Text = Display_strategy_builder + ' '+ IBD_bid_price + '/' + IBD_ask_price
+          document.getElementById("Display_strategy").value= DISP_Text
+          
+          var copyText = document.getElementById("Display_strategy");
+          
+          copyText.select();
+          copyText.setSelectionRange(0, 99999); 
+        
+          navigator.clipboard.writeText(copyText.value);       
+    }
+    else{
+         alert("Calculate the Broker Market Prices");
+    } 
+
+});
+
+
 </script>
 
 {% endblock %}
+
+
 
