@@ -133,6 +133,27 @@ def BS_data():
     print(combine_pricer_list_result)
     
 #---------------------From here coding for the option strategy display structure----------------------
+
+# Function which initializes the monthsMap
+    monthsMap=dict()
+    def sort_months():
+        monthsMap["JAN"] = 1
+        monthsMap["FEB"] = 2
+        monthsMap["MAR"] = 3
+        monthsMap["Apr"] = 4
+        monthsMap["MAY"] = 5
+        monthsMap["JUN"] = 6
+        monthsMap["JUL"] = 7
+        monthsMap["AUG"] = 8
+        monthsMap["SEP"] = 9
+        monthsMap["OCT"] = 10
+        monthsMap["NOV"] = 11
+        monthsMap["DEC"] = 12
+        
+    def cmp(date):
+        date=date.split()
+        return int(date[1]),monthsMap[date[0]]
+
     strategy_maturity_list,strategy_maturity_display_result=[],[]
     for i in range(len(Maturity)):
         datetime_str = Maturity[i]
@@ -153,7 +174,17 @@ def BS_data():
     
     print(strategy_maturity_list)
     print(strategy_maturity_display_result)
+
+#MAKING THE strategy_maturity_display_result LIST ARRANGED IN ASSCENDING ORDER
+# Order the months
+    sort_months()
+     
+# Sort the dates
+    strategy_maturity_display_result.sort(key=cmp)
     
+#Removing the emptying spaces in the display maturity list
+    strategy_maturity_display_result = [item.replace(' ', '') for item in strategy_maturity_display_result]
+    print(strategy_maturity_display_result)
     
     #Here Mat_list_matching is to check where all the maturities in the strategy_maturity_list are same or not
     Mat_list_matching = strategy_maturity_list.count(strategy_maturity_list[0]) == len(strategy_maturity_list)
