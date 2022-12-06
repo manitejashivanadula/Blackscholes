@@ -135,24 +135,7 @@ def BS_data():
 #---------------------From here coding for the option strategy display structure----------------------
 
 # Function which initializes the monthsMap
-    monthsMap=dict()
-    def sort_months():
-        monthsMap["JAN"] = 1
-        monthsMap["FEB"] = 2
-        monthsMap["MAR"] = 3
-        monthsMap["Apr"] = 4
-        monthsMap["MAY"] = 5
-        monthsMap["JUN"] = 6
-        monthsMap["JUL"] = 7
-        monthsMap["AUG"] = 8
-        monthsMap["SEP"] = 9
-        monthsMap["OCT"] = 10
-        monthsMap["NOV"] = 11
-        monthsMap["DEC"] = 12
-        
-    def cmp(date):
-        date=date.split()
-        return int(date[1]),monthsMap[date[0]]
+
 
     strategy_maturity_list,strategy_maturity_display_result=[],[]
     for i in range(len(Maturity)):
@@ -168,15 +151,35 @@ def BS_data():
         strategy_maturity=strategy_maturity.upper()
         strategy_maturity_list.append(strategy_maturity)
 #this is for appending in the end list with only month and year
-        strategy_maturity_display=month+year
+        strategy_maturity_display=month+ ' ' +year
         strategy_maturity_display=strategy_maturity_display.upper()
         strategy_maturity_display_result.append(strategy_maturity_display)    
     
     print(strategy_maturity_list)
     print(strategy_maturity_display_result)
 
-#MAKING THE strategy_maturity_display_result LIST ARRANGED IN ASSCENDING ORDER
+#MAKING THE strategy_maturity_display_result LIST ARRANGED IN ASSCENDING ORDER   
+    monthsMap=dict()
+    def sort_months():
+        monthsMap["JAN"] = 1
+        monthsMap["FEB"] = 2
+        monthsMap["MAR"] = 3
+        monthsMap["APR"] = 4
+        monthsMap["MAY"] = 5
+        monthsMap["JUN"] = 6
+        monthsMap["JUL"] = 7
+        monthsMap["AUG"] = 8
+        monthsMap["SEP"] = 9
+        monthsMap["OCT"] = 10
+        monthsMap["NOV"] = 11
+        monthsMap["DEC"] = 12
+        
+    def cmp(date):
+        date=date.split()
+        return (int(date[1]),(monthsMap[date[0]])) 
+    
 # Order the months
+    n = len(strategy_maturity_display_result)
     sort_months()
      
 # Sort the dates
