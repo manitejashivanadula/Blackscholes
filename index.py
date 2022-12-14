@@ -1,12 +1,13 @@
 import QuantLib as ql
 import numpy as np
-from flask import Flask, render_template, request, json
+from flask import Flask, render_template, request
 from scipy.stats import norm
 from datetime import datetime
 from datetime import date
 from dateutil.parser import parse
 import bloom_api
 from numpy import array
+from statistics import mean
 
 
 app= Flask(__name__)
@@ -133,10 +134,7 @@ def BS_data():
     print(combine_pricer_list_result)
     
 #---------------------From here coding for the option strategy display structure----------------------
-
 # Function which initializes the monthsMap
-
-
     strategy_maturity_list,strategy_maturity_display_result=[],[]
     for i in range(len(Maturity)):
         datetime_str = Maturity[i]
@@ -154,7 +152,7 @@ def BS_data():
         strategy_maturity_display=month+ ' ' +year
         strategy_maturity_display=strategy_maturity_display.upper()
         strategy_maturity_display_result.append(strategy_maturity_display)    
-    
+   
     print(strategy_maturity_list)
     print(strategy_maturity_display_result)
 
@@ -179,7 +177,6 @@ def BS_data():
         return (int(date[1]),(monthsMap[date[0]])) 
     
 # Order the months
-    n = len(strategy_maturity_display_result)
     sort_months()
      
 # Sort the dates
@@ -386,7 +383,7 @@ def BS_data():
     print(option_price_value_result)
     
 #sum of vol_array and vega for calculating the IDB prices
-    Sum_vol_array=float("{0:.3f}".format(sum(Vol_array)))
+    Sum_vol_array=float("{0:.3f}".format(mean(Vol_array)))
     print('Sum_vol_array',Sum_vol_array)
     
     print("...........Market_values..............")
@@ -409,9 +406,9 @@ def BS_data():
     print('Adj_Bid_vol',Adj_Bid_vol)
     print('Adj_Ask_vol',Adj_Ask_vol)
     
-    Sum_Adj_Bid_vol=float("{0:.2f}".format(sum(Adj_Bid_vol)))
+    Sum_Adj_Bid_vol=float("{0:.2f}".format(mean(Adj_Bid_vol)))
     print('Sum_Adj_Bid_vol',Sum_Adj_Bid_vol)
-    Sum_Adj_Ask_vol=float("{0:.2f}".format(sum(Adj_Ask_vol)))
+    Sum_Adj_Ask_vol=float("{0:.2f}".format(mean(Adj_Ask_vol)))
     print('Sum_Adj_Ask_vol',Sum_Adj_Ask_vol)
 
 
@@ -502,7 +499,6 @@ def get_option_price(valuation_date, expiry_date, underlying_price, strike_price
     Greeks.append(float(Gamma))
 
     return Greeks
-
 
 
 
