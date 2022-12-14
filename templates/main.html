@@ -142,12 +142,21 @@
                   <div class="col-4">
                       <input type="text" class="form-control" id="Display_strategy" placeholder="Strategy" >
                   </div>
-                  <div class="col-2">                  
+                  <div class="col-1">                  
                       <svg id="Copy_button"  xmlns="http://www.w3.org/2000/svg" width="25" height="30" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
                       <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
                       </svg> 
                   </div>
-                  <div class="col-4"></div>
+                  <div class="col-5">
+                      <Table>
+                            <tr>
+                                <td><input  type="integer" class="form-control col-2" id="Add_price" placeholder="Add Price" ></td>
+                                <td><input  type="integer" class="form-control col-2" id="Add_delta" placeholder="Add Delta" ></td>
+                                <td><input type="integer" class="form-control col-2" id="Add_quantity" placeholder="Add Quantity" > </td>
+                                <td><button type="button" class="btn btn-secondary btn-sm" id="Strategy_extension">ADD</button></td>
+                             </tr>                                        
+                      </Table>
+                  </div>
                   <div class="col-2">
                       <button   type="button" id="bloom_refresh" class="btn btn-secondary btn-sm" style="margin-left:120px" >Refresh</button>    
                       <button   type="submit" id="eu_option_button" class="btn btn-primary btn-md" style="margin-right" >Calculate</button>  
@@ -276,6 +285,8 @@
 <script type="text/javascript">
 
         var Display_strategy_builder = '';
+        
+        var DISP_Text_STRATEGY = '';
         
         var Currency_rates =  '';
         
@@ -927,7 +938,7 @@ $(document).on('click','#bloom_refresh', function() {
          xhr.open('post','/Blackscholes_table_refresh',true);  
          xhr.setRequestHeader('content-type','application/json');
          var Spinner=  '<div class="spinner-border" role="status"> <span class="sr-only"></span></div> Loading' 
-         $('#bloom_refresh').html(Spinner);         
+         $('#bloom_refresh').html(Spinner);
               
          xhr.onload = function(){
             
@@ -946,7 +957,7 @@ $(document).on('click','#bloom_refresh', function() {
                     var table_row = $(this).closest('tr').index(); 
                                           
                     for(i=0;i<=market_option_data.length;i++){
-                        
+                         
                         if(table_row==i){
                                 $(this).find("#Volatility").val(market_option_data[i][0])
                                 $(this).find("#Bid_price").val(market_option_data[i][1])
@@ -977,7 +988,7 @@ $('#IBD_bid_price').on('keyup', function() {
           
           var Display_strategy= document.getElementById("Display_strategy").value;
           
-          New_IBD_bid_vol=  ((Vol_array - ((Calculated_option_price - IBD_bid_price )/Sum_of_Vega)  )*100);
+          New_IBD_bid_vol=  ((0.2375 - ((Calculated_option_price - IBD_bid_price )/Sum_of_Vega)  )*100);
           
           document.getElementById('IBD_bid_vol').value= parseFloat(New_IBD_bid_vol).toFixed(2)     
      }
@@ -997,7 +1008,7 @@ $('#IBD_ask_price').on('keyup', function() {
      }else{
           var IBD_ask_price=  document.getElementById("IBD_ask_price").value;
           
-          New_IBD_ask_vol=  ((Vol_array - ((Calculated_option_price - IBD_ask_price )/Sum_of_Vega)  )*100);
+          New_IBD_ask_vol=  ((0.2375 - ((Calculated_option_price - IBD_ask_price )/Sum_of_Vega)  )*100);
       
           document.getElementById('IBD_ask_vol').value= parseFloat(New_IBD_ask_vol).toFixed(2)
      }
@@ -1013,8 +1024,9 @@ $(document).on('click','#Copy_button', function() {
     var IBD_ask_price=  document.getElementById("IBD_ask_price").value;
     
     if(IBD_bid_price && IBD_ask_price != ''){
-          var DISP_Text = Display_strategy_builder + ' '+ IBD_bid_price + '/' + IBD_ask_price
-          document.getElementById("Display_strategy").value= DISP_Text
+          DISP_Text_STRATEGY = '{qt}' + ' ' + Display_strategy_builder + ' '+ IBD_bid_price + '/' + IBD_ask_price
+          
+          document.getElementById("Display_strategy").value= DISP_Text_STRATEGY
           
           var copyText = document.getElementById("Display_strategy");
           
@@ -1030,6 +1042,47 @@ $(document).on('click','#Copy_button', function() {
 });
 
 
+
+
+<!-- To add the quantity and delta to strategy --->
+$(document).on('click','#Strategy_extension', function() {
+
+    var Strategy= document.getElementById("Display_strategy").value
+    var IBD_bid_price=  document.getElementById("IBD_bid_price").value;
+    var IBD_ask_price=  document.getElementById("IBD_ask_price").value;
+    
+
+    if(IBD_bid_price && IBD_ask_price && Strategy!= ''){
+        var Add_delta=  document.getElementById("Add_delta").value;
+        var Add_quantity=  document.getElementById("Add_quantity").value;
+        
+        var Add_price=  document.getElementById("Add_price").value;
+        if(Add_delta && Add_quantity != ''){
+        
+            var Qantity_with_delta = (Add_delta * Add_quantity)/100
+            //parseFloat(Qantity_with_delta).toFixed(2)
+    
+            var modified_strategy= Display_strategy_builder + ' ' + 'Traded @'+ ' '+Add_price + ' ' + 'd'+ Add_delta + '%' + ' '+ 'X' + ' '+ Add_quantity
+              
+            Strategy.value= '';
+            
+            document.getElementById("Display_strategy").value = modified_strategy
+            
+           var copyText = document.getElementById("Display_strategy");
+          
+           copyText.select();
+           copyText.setSelectionRange(0, 99999); 
+        
+           navigator.clipboard.writeText(copyText.value);             
+                        
+        }
+        else{alert("Enter the Delta and Quantity");} 
+    }else{alert("Calculate the Strategy with Broker Prices");}
+
+});
+
+
+ 
 </script>
 
 {% endblock %}
